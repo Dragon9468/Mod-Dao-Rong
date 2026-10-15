@@ -198,15 +198,13 @@ window.renderShopTab = function(tab) {
   const game = window.GameInstance;
 
   if (tab === 'dragons') {
-    // Buy Dragon Eggs
+    // Buy Dragon Eggs with Live Dragon Avatar Preview
     const list = Object.values(DRAGONS_DB).filter(d => d.shopPriceGold > 0);
     container.innerHTML = `
       <div class="shop-grid">
         ${list.map(d => `
           <div class="item-card">
-            <div class="item-preview" style="background: ${d.appearance.primaryColor}; color: #fff;">
-              🥚
-            </div>
+            <canvas id="canvas-shop-dragon-${d.id}" width="92" height="82" style="border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); margin-bottom: 6px;"></canvas>
             <div class="item-name">${d.name}</div>
             <div class="item-meta">${d.rarityLabel} • Ấp: ${d.hatchTime}s</div>
             <button class="btn-buy" onclick="buyDragonEgg('${d.id}')">
@@ -216,6 +214,12 @@ window.renderShopTab = function(tab) {
         `).join('')}
       </div>
     `;
+
+    // Render preview canvas rồng thực tế
+    list.forEach(d => {
+      const cvs = document.getElementById(`canvas-shop-dragon-${d.id}`);
+      if (cvs) DragonCanvasRenderer.renderDragonToCanvas(cvs, d, 4);
+    });
   } else if (tab === 'habitats') {
     // Buy Habitats
     const list = Object.values(HABITATS_DB);
@@ -333,11 +337,9 @@ window.openHabitatModal = function(habitat) {
     return `
       <div class="item-card" style="align-items: stretch; text-align: left;">
         <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
-          <div style="width: 48px; height: 48px; border-radius: 12px; background: ${config.appearance.primaryColor}; display: flex; align-items: center; justify-content: center; font-size: 26px;">
-            🐲
-          </div>
+          <canvas id="canvas-hab-dragon-${d.instanceId}" width="70" height="64" style="border-radius: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);"></canvas>
           <div>
-            <h4 style="font-size: 15px; font-weight: 800;">${d.name}</h4>
+            <h4 style="font-size: 15px; font-weight: 800; color: #fff;">${d.name}</h4>
             <div style="font-size: 11px; color: var(--primary); font-weight: 700;">Cấp ${d.level} • ${stage.name}</div>
           </div>
         </div>
@@ -374,6 +376,15 @@ window.openHabitatModal = function(habitat) {
       ${dragonsHtml || '<p style="color: var(--text-muted);">Chuồng này hiện đang trống. Hãy ấp nở trứng rồng để đưa vào đây!</p>'}
     </div>
   `;
+
+  // Vẽ hình ảnh rồng thật lên từng thẻ canvas
+  habitat.dragons.forEach(d => {
+    const cvs = document.getElementById(`canvas-hab-dragon-${d.instanceId}`);
+    if (cvs) {
+      const config = DRAGONS_DB[d.id];
+      DragonCanvasRenderer.renderDragonToCanvas(cvs, config, d.level);
+    }
+  });
 
   modal.classList.add('active');
   window.DragonAudio.playClick();
@@ -664,15 +675,27 @@ function openTeamSelectModal() {
   const container = document.getElementById('team-select-grid');
   container.innerHTML = `
     <div class="shop-grid">
-      ${allDragons.map(d => `
-        <div class="item-card" onclick="toggleSelectFighter('${d.instanceId}', this)">
-          <div style="font-size: 32px; margin-bottom: 4px;">🐲</div>
-          <div class="item-name">${d.name}</div>
-          <div class="item-meta">Cấp ${d.level} • Máu: ${d.stats.hp} • Công: ${d.stats.atk}</div>
-        </div>
-      `).join('')}
+      ${allDragons.map(d => {
+        const config = DRAGONS_DB[d.id] || DRAGONS_DB.dragon_fire;
+        return `
+          <div class="item-card" onclick="toggleSelectFighter('${d.instanceId}', this)">
+            <canvas id="canvas-select-dragon-${d.instanceId}" width="84" height="76" style="border-radius: 12px; margin-bottom: 6px;"></canvas>
+            <div class="item-name" style="font-size: 13px;">${d.name}</div>
+            <div class="item-meta">Cấp ${d.level} • Máu: ${d.stats.hp} • Công: ${d.stats.atk}</div>
+          </div>
+        `;
+      }).join('')}
     </div>
   `;
+
+  // Render từng avatar rồng
+  allDragons.forEach(d => {
+    const cvs = document.getElementById(`canvas-select-dragon-${d.instanceId}`);
+    if (cvs) {
+      const config = DRAGONS_DB[d.id] || DRAGONS_DB.dragon_fire;
+      DragonCanvasRenderer.renderDragonToCanvas(cvs, config, d.level);
+    }
+  });
 
   document.getElementById('team-count-text').innerText = 'Đã chọn: 0 / 3';
   modal.classList.add('active');
@@ -709,6 +732,8 @@ window.startBattleWithSelectedTeam = function() {
   startPVECombat(activeStage, selectedBattleTeam);
 };
 
+let battleAnimLoopId = null;
+
 function startPVECombat(stage, myTeam) {
   const modal = document.getElementById('battle-screen-modal');
   modal.classList.add('active');
@@ -725,6 +750,10 @@ function startPVECombat(stage, myTeam) {
   };
 
   battle.onBattleEnd = (result) => {
+    if (battleAnimLoopId) {
+      cancelAnimationFrame(battleAnimLoopId);
+      battleAnimLoopId = null;
+    }
     setTimeout(() => {
       handleBattleFinish(result);
     }, 1500);
@@ -738,7 +767,7 @@ function renderBattleArena(state) {
   const enemyContainer = document.getElementById('battle-enemies-row');
   enemyContainer.innerHTML = state.enemyTeam.map(e => `
     <div class="fighter-card ${e.isDead ? 'dead' : ''} ${state.currentFighter?.uid === e.uid ? 'active-turn' : ''} targetable" onclick="chooseBattleTarget('${e.uid}')" style="${e.isDead ? 'opacity: 0.2; pointer-events: none;' : ''}">
-      <div style="font-size: 38px; filter: drop-shadow(0 0 8px ${e.config.appearance.glow});">🐲</div>
+      <canvas class="fighter-avatar-canvas" id="canvas-fighter-${e.uid}" width="115" height="100"></canvas>
       <div style="font-size: 11px; font-weight: 800; color: #fff;">${e.name} (Lv.${e.level})</div>
       <div class="fighter-hp-bar">
         <div class="fighter-hp-fill" style="width: ${Math.round((e.hp / e.maxHp) * 100)}%;"></div>
@@ -754,7 +783,7 @@ function renderBattleArena(state) {
   const playerContainer = document.getElementById('battle-player-row');
   playerContainer.innerHTML = state.playerTeam.map(p => `
     <div class="fighter-card ${p.isDead ? 'dead' : ''} ${state.currentFighter?.uid === p.uid ? 'active-turn' : ''}" style="${p.isDead ? 'opacity: 0.2;' : ''}">
-      <div style="font-size: 38px; filter: drop-shadow(0 0 8px ${p.config.appearance.glow});">🐲</div>
+      <canvas class="fighter-avatar-canvas" id="canvas-fighter-${p.uid}" width="115" height="100"></canvas>
       <div style="font-size: 11px; font-weight: 800; color: #fff;">${p.name} (Lv.${p.level})</div>
       <div class="fighter-hp-bar">
         <div class="fighter-hp-fill" style="width: ${Math.round((p.hp / p.maxHp) * 100)}%;"></div>
@@ -765,6 +794,38 @@ function renderBattleArena(state) {
       <div style="font-size: 9px; color: #94a3b8;">${p.hp} / ${p.maxHp} HP</div>
     </div>
   `).join('');
+
+  // Hàm vẽ lại toàn bộ fighter canvas với nhịp đập cánh & thở
+  function renderAllFighterCanvases() {
+    const now = Date.now() / 1000;
+    state.enemyTeam.forEach((e, idx) => {
+      const cvs = document.getElementById(`canvas-fighter-${e.uid}`);
+      if (cvs && !e.isDead) {
+        DragonCanvasRenderer.renderDragonToCanvas(cvs, e.config, e.level, { animTime: now + idx * 0.4 });
+      }
+    });
+    state.playerTeam.forEach((p, idx) => {
+      const cvs = document.getElementById(`canvas-fighter-${p.uid}`);
+      if (cvs && !p.isDead) {
+        DragonCanvasRenderer.renderDragonToCanvas(cvs, p.config, p.level, { animTime: now + idx * 0.4 });
+      }
+    });
+  }
+
+  renderAllFighterCanvases();
+
+  // Khởi động loop hoạt họa chiến trường
+  if (!battleAnimLoopId) {
+    function battleAnimTick() {
+      if (document.getElementById('battle-screen-modal')?.classList.contains('active')) {
+        renderAllFighterCanvases();
+        battleAnimLoopId = requestAnimationFrame(battleAnimTick);
+      } else {
+        battleAnimLoopId = null;
+      }
+    }
+    battleAnimLoopId = requestAnimationFrame(battleAnimTick);
+  }
 
   // Update Action Buttons for Player Turn
   const isPlayerTurn = state.isMyTurn;
@@ -810,6 +871,15 @@ function showCombatFloatingDamage(data) {
   const banner = document.getElementById('battle-status-text');
   if (banner) {
     banner.innerText = `${data.attacker.name} tung chiêu '${data.skill.name}' gây -${data.damage} sát thương! ${data.advantageText}`;
+  }
+
+  // Hiệu ứng rung chuyển sàn đấu (Screen Shake Effect)
+  const field = document.querySelector('.battle-field');
+  if (field) {
+    field.classList.remove('shake');
+    void field.offsetWidth; // Trigger reflow
+    field.classList.add('shake');
+    setTimeout(() => field.classList.remove('shake'), 450);
   }
 }
 
@@ -922,5 +992,25 @@ window.importSaveData = function() {
     closeModal('save-modal');
   } else {
     alert('Mã sao lưu không hợp lệ!');
+  }
+};
+
+window.handleRedeemCode = function() {
+  const input = document.getElementById('giftcode-input');
+  if (!input) return;
+  const code = input.value.trim();
+  if (!code) {
+    alert('Vui lòng nhập mã quà tặng VIP (Ví dụ: VIPZINGME hoặc RONGXUONG)!');
+    return;
+  }
+
+  const res = window.GameInstance.redeemGiftCode(code);
+  if (res.success) {
+    alert(res.msg);
+    input.value = '';
+    closeModal('save-modal');
+    window.showBannerNotification('Nhận Rồng Xương Vàng & Rồng Xương Bạc thành công! 👑', 'gold');
+  } else {
+    alert(res.msg);
   }
 };

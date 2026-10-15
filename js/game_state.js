@@ -584,6 +584,117 @@ class DragonGameState {
     });
     return dragons;
   }
+
+  // Nhập Mã Quà Tặng VIP (Rồng Xương Vàng, Rồng Xương Bạc, Tài Nguyên VIP)
+  redeemGiftCode(code) {
+    if (!code) return { success: false, msg: 'Vui lòng nhập mã quà tặng!' };
+    const cleanCode = code.trim().toUpperCase();
+    this.state.redeemedCodes = this.state.redeemedCodes || [];
+
+    if (this.state.redeemedCodes.includes(cleanCode)) {
+      return { success: false, msg: `Mã '${cleanCode}' đã được sử dụng trước đó!` };
+    }
+
+    if (cleanCode === 'RONGXUONG' || cleanCode === 'VIPZINGME' || cleanCode === 'ZINGME') {
+      // 1. Tạo chuồng Long Cốt Đài nếu chưa có
+      let boneHab = this.state.habitats.find(h => h.type === 'habitat_bone');
+      if (!boneHab) {
+        boneHab = {
+          id: 'hab_bone_' + Date.now(),
+          islandId: this.state.currentIslandId,
+          type: 'habitat_bone',
+          level: 2,
+          currentGold: 500,
+          lastUpdated: Date.now(),
+          dragons: []
+        };
+        this.state.habitats.push(boneHab);
+      }
+
+      // 2. Thêm Rồng Xương Vàng Cấp 10
+      const goldenBone = {
+        instanceId: 'd_golden_bone_' + Date.now(),
+        id: 'dragon_golden_bone',
+        name: 'Hoàng Kim Cốt Long VIP',
+        level: 10,
+        currentFood: 0,
+        stats: calculateDragonStats(DRAGONS_DB.dragon_golden_bone.baseStats, 10)
+      };
+      boneHab.dragons.push(goldenBone);
+
+      // 3. Thêm Rồng Xương Bạc Cấp 10
+      const silverBone = {
+        instanceId: 'd_silver_bone_' + (Date.now() + 1),
+        id: 'dragon_silver_bone',
+        name: 'Ngân Cốt Long VIP',
+        level: 10,
+        currentFood: 0,
+        stats: calculateDragonStats(DRAGONS_DB.dragon_silver_bone.baseStats, 10)
+      };
+      boneHab.dragons.push(silverBone);
+
+      // 4. Tặng tài nguyên khủng
+      this.addGold(50000);
+      this.addGems(500);
+      this.addFood(3000);
+      this.addExp(500);
+
+      this.state.redeemedCodes.push(cleanCode);
+      if (window.DragonAudio) window.DragonAudio.playLevelUp();
+      this.save();
+      this.notify();
+
+      return {
+        success: true,
+        msg: `KÍCH HOẠT VIP THÀNH CÔNG! 🎉\nBạn đã nhận được:\n✨ 1x Rồng Xương Vàng (Hoàng Kim Cốt Long Lv.10)\n✨ 1x Rồng Xương Bạc (Ngân Cốt Long Lv.10)\n💀 1x Chuồng Long Cốt Đài\n💰 +50.000 Vàng, 💎 +500 Kim Cương, 🍓 +3.000 Thức Ăn!`
+      };
+    } else if (cleanCode === 'DRAGON9468' || cleanCode === 'FULLRONG') {
+      // Tặng toàn bộ các dòng rồng huyền thoại mới
+      let rainbowHab = this.state.habitats.find(h => h.type === 'habitat_rainbow');
+      if (!rainbowHab) {
+        rainbowHab = {
+          id: 'hab_rainbow_' + Date.now(),
+          islandId: this.state.currentIslandId,
+          type: 'habitat_rainbow',
+          level: 3,
+          currentGold: 1000,
+          lastUpdated: Date.now(),
+          dragons: []
+        };
+        this.state.habitats.push(rainbowHab);
+      }
+
+      const newLegendaries = ['dragon_blood_bone', 'dragon_cosmic', 'dragon_phoenix'];
+      newLegendaries.forEach((dragId, idx) => {
+        const cfg = DRAGONS_DB[dragId];
+        rainbowHab.dragons.push({
+          instanceId: `d_legend_${idx}_${Date.now()}`,
+          id: dragId,
+          name: cfg.name,
+          level: 10,
+          currentFood: 0,
+          stats: calculateDragonStats(cfg.baseStats, 10)
+        });
+      });
+
+      this.addGold(100000);
+      this.addGems(1000);
+      this.addFood(8000);
+      this.addExp(1000);
+
+      this.state.redeemedCodes.push(cleanCode);
+      if (window.DragonAudio) window.DragonAudio.playLevelUp();
+      this.save();
+      this.notify();
+
+      return {
+        success: true,
+        msg: `KÍCH HOẠT CODE ĐẶC QUYỀN THÀNH CÔNG! 👑\nĐã nhận Rồng Huyết Cốt, Rồng Tinh Tú Ngân Hà, Rồng Phượng Hoàng, Chuồng Thiên Cung + 100.000 Vàng & 1.000 Kim Cương!`
+      };
+    }
+
+    return { success: false, msg: `Mã quà tặng '${code}' không hợp lệ hoặc đã hết hạn!` };
+  }
 }
 
 window.DragonGameState = DragonGameState;

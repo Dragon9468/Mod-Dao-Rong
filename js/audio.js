@@ -305,6 +305,10 @@ class DragonSoundEngine {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(110, now);
         osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+        gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        break;
+
       case 'BONE':
         // Bone rattle & piercing spear
         osc.type = 'square';
@@ -322,6 +326,27 @@ class DragonSoundEngine {
         osc.frequency.exponentialRampToValueAtTime(300, now + 0.28);
         gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        break;
+
+      case 'COSMIC':
+      case 'LEGEND':
+        // Celestial shimmer cosmic blast
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(1500, now + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.35);
+        gain.gain.setValueAtTime(0.35 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        break;
+
+      case 'DEMON':
+      case 'DARK':
+        // Demonic hollow roar & dark pulse
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+        gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.32);
         break;
 
       default:

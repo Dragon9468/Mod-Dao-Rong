@@ -744,6 +744,213 @@ const DRAGONS_DB = {
       glow: 'rgba(148, 163, 184, 0.8)'
     },
     desc: 'Được trang bị bộ giáp thép dày cộp rèn bằng lửa núi lửa. Không một mũi tên hay nanh vuốt nào có thể để lại vết xước trên thân mình nó.'
+  },
+
+  // --- 6. CÁC BIẾN THỂ RỒNG XƯƠNG & HUYỀN THOẠI CỰC PHẨM KHÁC ---
+  dragon_blood_bone: {
+    id: 'dragon_blood_bone',
+    name: 'Rồng Huyết Xương (Huyết Cốt Long)',
+    title: 'Huyết Cốt Ma Thần VIP',
+    elements: ['BONE', 'FIRE', 'DARK'],
+    rarity: 5,
+    rarityLabel: 'VIP Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 360,
+    shopPriceGold: 22000,
+    shopPriceGems: 280,
+    baseStats: { hp: 310, atk: 92, def: 50, spd: 31 },
+    baseGoldRate: 85,
+    skills: {
+      normal: { name: 'Huyết Trảo Khát Máu', power: 62, desc: 'Cào xé bằng nanh vuốt xương đẫm máu.' },
+      elemental: { name: 'Huyết Lôi Ma Trận', power: 140, element: 'BONE', desc: 'Triệu hồi sấm sét máu đỏ thiêu đốt và hút 20% sinh lực địch.' },
+      ultimate: { name: 'Huyết Tẩy Thiên Địa Diệt Thế 🩸', power: 300, element: 'FIRE', desc: 'Biển máu xương rồng sôi sục hủy diệt hoàn toàn chiến trường.' }
+    },
+    appearance: {
+      isBone: true,
+      boneType: 'BLOOD',
+      primaryColor: '#dc2626',
+      secondaryColor: '#b91c1c',
+      eyeColor: '#fde047',
+      hornColor: '#7f1d1d',
+      bellyColor: '#991b1b',
+      glow: 'rgba(239, 68, 68, 1)'
+    },
+    desc: 'Chiến tướng rồng xương đẫm máu lẫy lừng sự kiện VIP Zing Me. Bộ khung xương đỏ rực như hồng ngọc huyết ma, chứa sức mạnh hút cạn sinh lực kẻ thù.'
+  },
+
+  dragon_emerald_bone: {
+    id: 'dragon_emerald_bone',
+    name: 'Rồng Bích Xương (Ngọc Cốt Long)',
+    title: 'Bích Cốt Trường Sinh VIP',
+    elements: ['BONE', 'LEAF', 'LIGHT'],
+    rarity: 5,
+    rarityLabel: 'VIP Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 330,
+    shopPriceGold: 19000,
+    shopPriceGems: 240,
+    baseStats: { hp: 315, atk: 84, def: 55, spd: 29 },
+    baseGoldRate: 82,
+    skills: {
+      normal: { name: 'Bích Cốt Xuyên Tâm', power: 60, desc: 'Mũi ngọc xương lục sắc đâm thủng giáp.' },
+      elemental: { name: 'Lục Quang Phản Chiếu', power: 135, element: 'BONE', desc: 'Tia sáng ngọc bích hồi phục 25% máu đồng thời gây sát thương lớn.' },
+      ultimate: { name: 'Vạn Cổ Bích Cốt Trận 💎', power: 285, element: 'LEAF', desc: 'Rừng chông ngọc bích mọc lên từ lòng đất thanh tẩy mọi tà khí.' }
+    },
+    appearance: {
+      isBone: true,
+      boneType: 'EMERALD',
+      primaryColor: '#10b981',
+      secondaryColor: '#059669',
+      eyeColor: '#a7f3d0',
+      hornColor: '#064e3b',
+      bellyColor: '#34d399',
+      glow: 'rgba(16, 185, 129, 1)'
+    },
+    desc: 'Hóa thạch ngọc bích triệu năm ngưng tụ thành khung xương rồng thanh khiết. Mang năng lượng trường sinh vĩnh cửu.'
+  },
+
+  dragon_frost_bone: {
+    id: 'dragon_frost_bone',
+    name: 'Rồng Băng Xương (Tuyết Cốt Long)',
+    title: 'Cực Hàn Tuyết Cốt',
+    elements: ['BONE', 'ICE'],
+    rarity: 4,
+    rarityLabel: 'Sử Thi ⭐⭐⭐⭐',
+    hatchTime: 240,
+    shopPriceGold: 8500,
+    shopPriceGems: 130,
+    baseStats: { hp: 270, atk: 76, def: 52, spd: 27 },
+    baseGoldRate: 55,
+    skills: {
+      normal: { name: 'Hàn Cốt Trảo', power: 52, desc: 'Móng vuốt xương băng buốt giá.' },
+      elemental: { name: 'Băng Phong Cốt Ngục', power: 125, element: 'ICE', desc: 'Tường băng xương giam cầm và giảm 40% tốc độ đối thủ.' },
+      ultimate: { name: 'Tuyết Cốt Táng Thiên ❄️', power: 260, element: 'BONE', desc: 'Bão tuyết xương rồng đóng băng tuyệt đối toàn bộ kẻ địch.' }
+    },
+    appearance: {
+      isBone: true,
+      boneType: 'FROST',
+      primaryColor: '#38bdf8',
+      secondaryColor: '#0284c7',
+      eyeColor: '#ffffff',
+      hornColor: '#0369a1',
+      bellyColor: '#bae6fd',
+      glow: 'rgba(56, 189, 248, 1)'
+    },
+    desc: 'Sinh ra từ sông băng bắc cực ngàn năm. Khung xương pha lê trong suốt tỏa ra hàn khí cắt da xé thịt.'
+  },
+
+  dragon_cosmic: {
+    id: 'dragon_cosmic',
+    name: 'Rồng Tinh Tú (Tinh Hà Thần Long)',
+    title: 'Bá Chủ Dải Ngân Hà',
+    elements: ['LEGEND', 'LIGHT', 'DARK'],
+    rarity: 5,
+    rarityLabel: 'Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 400,
+    shopPriceGold: 30000,
+    shopPriceGems: 350,
+    baseStats: { hp: 340, atk: 100, def: 48, spd: 34 },
+    baseGoldRate: 100,
+    skills: {
+      normal: { name: 'Tinh Hà Trảo', power: 68, desc: 'Vuốt rồng phủ bụi sao vũ trụ.' },
+      elemental: { name: 'Hố Đen Tinh Vân', power: 155, element: 'LEGEND', desc: 'Mở hố đen bẻ cong không thời gian nuốt trọn năng lượng đối thủ.' },
+      ultimate: { name: 'Vũ Trụ Siêu Tân Tinh 🌌', power: 330, element: 'LEGEND', desc: 'Vụ nổ Big Bang thu nhỏ san phẳng mọi vật cản.' }
+    },
+    appearance: {
+      isCosmic: true,
+      primaryColor: '#6366f1',
+      secondaryColor: '#a855f7',
+      eyeColor: '#38bdf8',
+      hornColor: '#ec4899',
+      bellyColor: '#c084fc',
+      glow: 'rgba(168, 85, 247, 1)'
+    },
+    desc: 'Lĩnh hội sức mạnh của cả vũ trụ bao la. Thân thể là bầu trời đêm muôn ánh sao lấp lánh và sừng pha lê thiên hà chói lọi.'
+  },
+
+  dragon_demon: {
+    id: 'dragon_demon',
+    name: 'Rồng Bách Quỷ (Hắc Ma Long Vương)',
+    title: 'Chúa Tể Địa Ngục',
+    elements: ['DARK', 'FIRE'],
+    rarity: 5,
+    rarityLabel: 'Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 340,
+    shopPriceGold: 20000,
+    shopPriceGems: 250,
+    baseStats: { hp: 305, atk: 94, def: 44, spd: 30 },
+    baseGoldRate: 85,
+    skills: {
+      normal: { name: 'Ma Vuốt Địa Ngục', power: 64, desc: 'Vuốt quỷ cào xé thiêu đốt linh hồn.' },
+      elemental: { name: 'Hắc Diễm Thiêu Hồn', power: 142, element: 'DARK', desc: 'Ngọn lửa đen địa ngục thiêu rụi phòng thủ.' },
+      ultimate: { name: 'Vạn Quỷ Dạ Hành 👿', power: 305, element: 'FIRE', desc: 'Triệu hồi ngàn âm binh quỷ giới cắn xé đối thủ.' }
+    },
+    appearance: {
+      isDemon: true,
+      primaryColor: '#18181b',
+      secondaryColor: '#dc2626',
+      eyeColor: '#facc15',
+      hornColor: '#450a0a',
+      bellyColor: '#27272a',
+      glow: 'rgba(220, 38, 38, 1)'
+    },
+    desc: 'Chúa tể thống trị cõi u minh. Đôi sừng quỷ uốn cong khổng lồ và đôi cánh dơi gai nhọn mang bóng đêm vĩnh hằng.'
+  },
+
+  dragon_leviathan: {
+    id: 'dragon_leviathan',
+    name: 'Rồng Biển Sâu (Cổ Hải Thần Long)',
+    title: 'Thần Thú Biển Khơi',
+    elements: ['WATER', 'LEGEND'],
+    rarity: 5,
+    rarityLabel: 'Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 330,
+    shopPriceGold: 17000,
+    shopPriceGems: 210,
+    baseStats: { hp: 330, atk: 82, def: 56, spd: 28 },
+    baseGoldRate: 80,
+    skills: {
+      normal: { name: 'Kình Lực Ba Đào', power: 58, desc: 'Vung đuôi cá voi tạo sóng đập mạnh.' },
+      elemental: { name: 'Hải Triều Thần Thoại', power: 138, element: 'WATER', desc: 'Lốc xoáy nước đại dương cuốn phăng hàng phòng ngự.' },
+      ultimate: { name: 'Thủy Thần Phẫn Nộ 🌊', power: 290, element: 'WATER', desc: 'Đại hồng thủy đại dương dâng cao nuốt chửng toàn bộ sàn đấu.' }
+    },
+    appearance: {
+      isLeviathan: true,
+      primaryColor: '#0284c7',
+      secondaryColor: '#06b6d4',
+      eyeColor: '#34d399',
+      hornColor: '#0c4a6e',
+      bellyColor: '#7dd3fc',
+      glow: 'rgba(6, 182, 212, 1)'
+    },
+    desc: 'Thần thú biển sâu thức giấc sau giấc ngủ nghìn năm dưới đáy rãnh Mariana. Vảy cá phát quang và sừng san hô đại dương huyền bí.'
+  },
+
+  dragon_cyber: {
+    id: 'dragon_cyber',
+    name: 'Rồng Cơ Khí (Thiết Long Laser)',
+    title: 'Pháo Đài Công Nghệ Cổ',
+    elements: ['STEEL', 'THUNDER'],
+    rarity: 4,
+    rarityLabel: 'Sử Thi ⭐⭐⭐⭐',
+    hatchTime: 230,
+    shopPriceGold: 8000,
+    shopPriceGems: 120,
+    baseStats: { hp: 280, atk: 75, def: 60, spd: 24 },
+    baseGoldRate: 52,
+    skills: {
+      normal: { name: 'Pháo Năng Lượng', power: 54, desc: 'Bắn loạt đạn pháo năng lượng cao.' },
+      elemental: { name: 'Laser Tầm Nhiệt', power: 124, element: 'THUNDER', desc: 'Chùm tia laser xanh dương thiêu rụi mục tiêu chỉ định.' },
+      ultimate: { name: 'Xung Điện Ion Siêu Cấp ⚡', power: 255, element: 'STEEL', desc: 'Lò phản ứng bộc phát xung điện EMP vô hiệu hóa đối thủ.' }
+    },
+    appearance: {
+      isCyber: true,
+      primaryColor: '#475569',
+      secondaryColor: '#38bdf8',
+      eyeColor: '#22c55e',
+      hornColor: '#1e293b',
+      bellyColor: '#94a3b8',
+      glow: 'rgba(56, 189, 248, 0.9)'
+    },
+    desc: 'Cổ vật cơ khí từ nền văn minh cổ đại thất truyền. Lớp giáp hợp kim titan siêu cứng và lò phản ứng hồ quang trước ngực.'
   }
 };
 
@@ -771,13 +978,20 @@ const BREEDING_RECIPES = [
   // Bất kỳ 2 rồng 3-4 sao lai với nhau có tỉ lệ ra Rồng Ánh Sáng / Bóng Tối
   { parents: ['THUNDER', 'ICE'], result: 'dragon_light', chance: 0.25 },
   { parents: ['FIRE', 'ICE'], result: 'dragon_dark', chance: 0.25 },
-  // Công thức Rồng Xương & Huyền Thoại
+  // Công thức Rồng Xương & Huyền Thoại Cực Phẩm
   { parents: ['DARK', 'EARTH'], result: 'dragon_ancient_bone', chance: 0.35 },
   { parents: ['BONE', 'ICE'], result: 'dragon_silver_bone', chance: 0.25 },
   { parents: ['BONE', 'LIGHT'], result: 'dragon_golden_bone', chance: 0.15 },
+  { parents: ['BONE', 'FIRE'], result: 'dragon_blood_bone', chance: 0.22 },
+  { parents: ['BONE', 'LEAF'], result: 'dragon_emerald_bone', chance: 0.25 },
+  { parents: ['ICE', 'BONE'], result: 'dragon_frost_bone', chance: 0.30 },
+  { parents: ['LIGHT', 'LEGEND'], result: 'dragon_cosmic', chance: 0.15 },
+  { parents: ['DARK', 'FIRE'], result: 'dragon_demon', chance: 0.25 },
+  { parents: ['WATER', 'LEGEND'], result: 'dragon_leviathan', chance: 0.25 },
+  { parents: ['STEEL', 'THUNDER'], result: 'dragon_cyber', chance: 0.35 },
   { parents: ['FIRE', 'LIGHT'], result: 'dragon_phoenix', chance: 0.25 },
-  { parents: ['DARK', 'FIRE'], result: 'dragon_hydra', chance: 0.30 },
-  { parents: ['EARTH', 'THUNDER'], result: 'dragon_armored', chance: 0.35 }
+  { parents: ['DARK', 'THUNDER'], result: 'dragon_hydra', chance: 0.30 },
+  { parents: ['EARTH', 'STEEL'], result: 'dragon_armored', chance: 0.35 }
 ];
 
 // Helper tính toán rồng con từ 2 rồng bố mẹ

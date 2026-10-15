@@ -625,7 +625,7 @@ class DragonCanvasRenderer {
     const app = dConfig.appearance;
 
     if (app.isBone) {
-      // 1. Render Tộc Rồng Xương (Golden Bone, Silver Bone, Dark Bone)
+      // 1. Render Tộc Rồng Xương (Golden Bone, Silver Bone, Blood Bone, Emerald Bone, Frost Bone, Dark Bone)
       this.drawSkeletalDragon(ctx, app, level, wingFlap, dConfig);
     } else if (app.isHydra) {
       // 2. Render Rồng Ba Đầu
@@ -633,8 +633,20 @@ class DragonCanvasRenderer {
     } else if (app.isPhoenix) {
       // 3. Render Rồng Phượng Hoàng
       this.drawPhoenixDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isCosmic) {
+      // 4. Render Rồng Tinh Tú Ngân Hà
+      this.drawCosmicDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isDemon) {
+      // 5. Render Rồng Bách Quỷ
+      this.drawDemonDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isLeviathan) {
+      // 6. Render Rồng Biển Sâu Leviathan
+      this.drawLeviathanDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isCyber || app.isArmored) {
+      // 7. Render Rồng Cơ Khí / Thiết Giáp
+      this.drawCyberDragon(ctx, app, level, wingFlap, dConfig);
     } else {
-      // 4. Render Rồng Tiêu Chuẩn Nâng Cao
+      // 8. Render Rồng Tiêu Chuẩn Nâng Cao
       this.drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig);
     }
 
@@ -651,64 +663,80 @@ class DragonCanvasRenderer {
     ctx.restore();
   }
 
-  // A. Skeletal Bone Dragon (Rồng Xương Vàng & Bạc)
+  // A. Skeletal Bone Dragon (Toàn bộ các hệ Rồng Xương Zing Me kinh điển)
   drawSkeletalDragon(ctx, app, level, wingFlap, dConfig) {
     const isGold = (app.boneType === 'GOLD');
     const isSilver = (app.boneType === 'SILVER');
+    const isBlood = (app.boneType === 'BLOOD');
+    const isEmerald = (app.boneType === 'EMERALD');
+    const isFrost = (app.boneType === 'FROST');
+
+    // Aura phát sáng bao quanh rồng xương
+    ctx.save();
+    ctx.shadowColor = app.glow || '#fbbf24';
+    ctx.shadowBlur = 14;
 
     // 1. Skeletal Wings Back
     ctx.save();
     ctx.rotate(-wingFlap);
     ctx.strokeStyle = app.primaryColor;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.8;
     ctx.beginPath();
     ctx.moveTo(8, -10);
     ctx.lineTo(28, -28);
-    ctx.lineTo(36, -12);
+    ctx.lineTo(38, -14);
     ctx.lineTo(16, -2);
     ctx.stroke();
 
     // Ethereal soul membrane between bones
-    ctx.fillStyle = isGold ? 'rgba(251, 191, 36, 0.35)' : 'rgba(56, 189, 248, 0.35)';
+    let membraneColor = 'rgba(251, 191, 36, 0.4)';
+    if (isSilver) membraneColor = 'rgba(56, 189, 248, 0.35)';
+    else if (isBlood) membraneColor = 'rgba(220, 38, 38, 0.45)';
+    else if (isEmerald) membraneColor = 'rgba(16, 185, 129, 0.4)';
+    else if (isFrost) membraneColor = 'rgba(186, 230, 253, 0.4)';
+    else if (app.boneType === 'DARK') membraneColor = 'rgba(147, 51, 234, 0.45)';
+
+    ctx.fillStyle = membraneColor;
     ctx.fill();
     ctx.restore();
 
-    // 2. Skeletal Vertebrae Tail
+    // 2. Skeletal Vertebrae Tail with sharp scythe blade
     ctx.strokeStyle = app.primaryColor;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.8;
     ctx.beginPath();
     ctx.moveTo(0, 14);
     ctx.quadraticCurveTo(18, 22, 28, 16);
     ctx.stroke();
 
     // Tail bone scythe blade
-    ctx.fillStyle = isGold ? '#f59e0b' : '#38bdf8';
+    ctx.fillStyle = app.secondaryColor || app.primaryColor;
     ctx.beginPath();
     ctx.moveTo(28, 16);
-    ctx.lineTo(36, 12);
-    ctx.lineTo(32, 22);
+    ctx.lineTo(38, 11);
+    ctx.lineTo(33, 23);
     ctx.closePath();
     ctx.fill();
 
     // 3. Exposed Skeletal Ribcage
-    ctx.fillStyle = '#0f172a'; // dark chest cavity
+    ctx.fillStyle = '#0b0f19'; // dark chest cavity
     ctx.beginPath();
     ctx.ellipse(0, 0, 14, 18, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Glowing Inner Soul Heart Core
-    const heartPulse = Math.sin(this.animTime * 6) * 2;
-    ctx.fillStyle = isGold ? '#ef4444' : '#06b6d4';
-    ctx.shadowColor = isGold ? '#ef4444' : '#06b6d4';
-    ctx.shadowBlur = 10 + heartPulse;
+    const heartPulse = Math.sin(this.animTime * 6) * 3;
+    let heartColor = isGold ? '#ef4444' : (isSilver ? '#06b6d4' : (isBlood ? '#f43f5e' : (isEmerald ? '#34d399' : '#38bdf8')));
+    ctx.fillStyle = heartColor;
+    ctx.shadowColor = heartColor;
+    ctx.shadowBlur = 12 + heartPulse;
     ctx.beginPath();
-    ctx.arc(0, 0, 5, 0, Math.PI * 2);
+    ctx.arc(0, 0, 5.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
 
     // Rib bones
     ctx.strokeStyle = app.primaryColor;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.6;
     for (let r = -8; r <= 8; r += 4) {
       ctx.beginPath();
       ctx.moveTo(-11, r);
@@ -720,14 +748,14 @@ class DragonCanvasRenderer {
     ctx.save();
     ctx.rotate(wingFlap);
     ctx.strokeStyle = app.primaryColor;
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.8;
     ctx.beginPath();
     ctx.moveTo(-6, -6);
     ctx.lineTo(-28, -26);
-    ctx.lineTo(-32, -10);
+    ctx.lineTo(-34, -10);
     ctx.lineTo(-12, 0);
     ctx.stroke();
-    ctx.fillStyle = isGold ? 'rgba(251, 191, 36, 0.4)' : 'rgba(56, 189, 248, 0.4)';
+    ctx.fillStyle = membraneColor;
     ctx.fill();
     ctx.restore();
 
@@ -745,57 +773,70 @@ class DragonCanvasRenderer {
     ctx.fillStyle = '#fff';
     ctx.fill();
 
-    // Bone Horns (Golden Crown if Golden Bone Dragon)
+    // Bone Horns / Crown
     if (isGold) {
+      // Golden Crown 5 Spikes
       ctx.fillStyle = '#f59e0b';
       ctx.beginPath();
       ctx.moveTo(-10, -28);
-      ctx.lineTo(-16, -44);
-      ctx.lineTo(-6, -32);
-      ctx.lineTo(0, -48); // Crown center spire
-      ctx.lineTo(6, -32);
-      ctx.lineTo(16, -44);
+      ctx.lineTo(-17, -46);
+      ctx.lineTo(-7, -33);
+      ctx.lineTo(0, -50); // Crown center spire
+      ctx.lineTo(7, -33);
+      ctx.lineTo(17, -46);
       ctx.lineTo(10, -28);
       ctx.closePath();
       ctx.fill();
+    } else if (isBlood) {
+      // Demonic Crimson Blood Spikes
+      ctx.fillStyle = '#991b1b';
+      ctx.beginPath();
+      ctx.moveTo(-5, -28);
+      ctx.lineTo(-16, -46);
+      ctx.lineTo(-1, -34);
+      ctx.lineTo(5, -28);
+      ctx.lineTo(16, -46);
+      ctx.lineTo(1, -34);
+      ctx.closePath();
+      ctx.fill();
     } else {
-      ctx.strokeStyle = app.hornColor;
-      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = app.hornColor || '#64748b';
+      ctx.lineWidth = 2.8;
       ctx.beginPath();
       ctx.moveTo(-5, -30);
-      ctx.lineTo(-15, -42);
+      ctx.lineTo(-15, -44);
       ctx.moveTo(5, -30);
-      ctx.lineTo(15, -42);
+      ctx.lineTo(15, -44);
       ctx.stroke();
     }
 
     // Glowing Eye Sockets
     ctx.fillStyle = app.eyeColor;
     ctx.shadowColor = app.eyeColor;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 10;
     ctx.beginPath();
     ctx.arc(-4, -22, 3, 0, Math.PI * 2);
     ctx.arc(4, -22, 3, 0, Math.PI * 2);
     ctx.fill();
     ctx.shadowBlur = 0;
+
+    ctx.restore();
   }
 
   // B. Hydra Three-Headed Dragon
   drawHydraDragon(ctx, app, level, wingFlap, dConfig) {
-    // Body & Wings
     ctx.fillStyle = app.primaryColor;
     ctx.beginPath();
     ctx.ellipse(0, 0, 18, 22, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3 Heads
     const headOffsets = [
       { x: -14, y: -24, rot: -0.25 },
       { x: 0, y: -28, rot: 0 },
       { x: 14, y: -24, rot: 0.25 }
     ];
 
-    headOffsets.forEach((h, idx) => {
+    headOffsets.forEach((h) => {
       ctx.save();
       ctx.translate(h.x, h.y);
       ctx.rotate(h.rot);
@@ -811,7 +852,6 @@ class DragonCanvasRenderer {
       ctx.arc(3, -2, 2, 0, Math.PI * 2);
       ctx.fill();
 
-      // Sharp Horn
       ctx.fillStyle = app.hornColor;
       ctx.beginPath();
       ctx.moveTo(-3, -8);
@@ -825,7 +865,6 @@ class DragonCanvasRenderer {
 
   // C. Phoenix Dragon
   drawPhoenixDragon(ctx, app, level, wingFlap, dConfig) {
-    // Flaming Wings
     ctx.save();
     ctx.rotate(-wingFlap * 1.3);
     const flameGrad = ctx.createLinearGradient(0, 0, 35, -35);
@@ -843,19 +882,16 @@ class DragonCanvasRenderer {
     ctx.fill();
     ctx.restore();
 
-    // Body
     ctx.fillStyle = app.primaryColor;
     ctx.beginPath();
     ctx.ellipse(0, 0, 16, 20, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Golden Belly
     ctx.fillStyle = app.bellyColor;
     ctx.beginPath();
     ctx.ellipse(-2, 3, 9, 13, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Phoenix Head & Crest Feathers
     ctx.fillStyle = app.primaryColor;
     ctx.beginPath();
     ctx.arc(0, -22, 12, 0, Math.PI * 2);
@@ -881,7 +917,258 @@ class DragonCanvasRenderer {
     ctx.fill();
   }
 
-  // D. Standard Enhanced Dragon
+  // D. Cosmic Galaxy Dragon (Rồng Tinh Tú Ngân Hà)
+  drawCosmicDragon(ctx, app, level, wingFlap, dConfig) {
+    ctx.save();
+
+    // Orbital Celestial Star Rings
+    const orbitAngle = this.animTime * 2;
+    ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(0, -5, 34, 14, 0.4, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Orbiting Star Particle
+    const starX = Math.cos(orbitAngle) * 34;
+    const starY = Math.sin(orbitAngle) * 14 - 5;
+    ctx.fillStyle = '#38bdf8';
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(starX, starY, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Cosmic Wings with Galaxy Gradient
+    ctx.save();
+    ctx.rotate(-wingFlap);
+    const gradW = ctx.createLinearGradient(0, 0, 36, -32);
+    gradW.addColorStop(0, '#6366f1');
+    gradW.addColorStop(0.5, '#a855f7');
+    gradW.addColorStop(1, '#ec4899');
+    ctx.fillStyle = gradW;
+    ctx.beginPath();
+    ctx.moveTo(8, -12);
+    ctx.lineTo(34, -32);
+    ctx.lineTo(38, -10);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Body
+    ctx.fillStyle = '#1e1b4b';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 16, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Starlight Belly
+    ctx.fillStyle = '#a855f7';
+    ctx.beginPath();
+    ctx.ellipse(-2, 3, 9, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Head
+    ctx.fillStyle = '#312e81';
+    ctx.beginPath();
+    ctx.arc(0, -22, 13, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Crystal Horns
+    ctx.fillStyle = '#ec4899';
+    ctx.beginPath();
+    ctx.moveTo(-5, -32);
+    ctx.lineTo(-14, -48);
+    ctx.lineTo(-1, -35);
+    ctx.lineTo(5, -32);
+    ctx.lineTo(14, -48);
+    ctx.lineTo(1, -35);
+    ctx.closePath();
+    ctx.fill();
+
+    // Glowing Cyan Eyes
+    ctx.fillStyle = '#38bdf8';
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(-3, -23, 3, 0, Math.PI * 2);
+    ctx.arc(5, -23, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+
+  // E. Demon Dragon (Rồng Bách Quỷ)
+  drawDemonDragon(ctx, app, level, wingFlap, dConfig) {
+    ctx.save();
+
+    // Spiked Demon Bat Wings
+    ctx.save();
+    ctx.rotate(-wingFlap * 1.2);
+    ctx.fillStyle = '#18181b';
+    ctx.strokeStyle = '#dc2626';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(8, -10);
+    ctx.lineTo(36, -30);
+    ctx.lineTo(26, -6);
+    ctx.lineTo(38, 2);
+    ctx.lineTo(14, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Demon Body
+    ctx.fillStyle = '#18181b';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 17, 21, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Hellfire Runes on Belly
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath();
+    ctx.ellipse(-2, 4, 8, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Skull Head
+    ctx.fillStyle = '#27272a';
+    ctx.beginPath();
+    ctx.arc(0, -22, 13, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Huge Curled Hell Horns
+    ctx.strokeStyle = '#7f1d1d';
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(-4, -30);
+    ctx.quadraticCurveTo(-22, -45, -16, -55);
+    ctx.moveTo(4, -30);
+    ctx.quadraticCurveTo(22, -45, 16, -55);
+    ctx.stroke();
+
+    // Yellow Glowing Eyes
+    ctx.fillStyle = '#facc15';
+    ctx.shadowColor = '#facc15';
+    ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.arc(-4, -22, 3, 0, Math.PI * 2);
+    ctx.arc(4, -22, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+
+  // F. Leviathan Sea Dragon (Rồng Biển Sâu)
+  drawLeviathanDragon(ctx, app, level, wingFlap, dConfig) {
+    ctx.save();
+
+    // Oceanic Dorsal Fins
+    ctx.save();
+    ctx.rotate(-wingFlap * 0.7);
+    ctx.fillStyle = 'rgba(6, 182, 212, 0.75)';
+    ctx.beginPath();
+    ctx.moveTo(8, -8);
+    ctx.quadraticCurveTo(34, -28, 26, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Serpentine Body
+    ctx.fillStyle = app.primaryColor;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 16, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Coral Belly
+    ctx.fillStyle = app.bellyColor;
+    ctx.beginPath();
+    ctx.ellipse(-2, 3, 9, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Head
+    ctx.fillStyle = app.secondaryColor;
+    ctx.beginPath();
+    ctx.arc(0, -22, 13, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Coral Horns
+    ctx.fillStyle = app.hornColor;
+    ctx.beginPath();
+    ctx.moveTo(-5, -32);
+    ctx.lineTo(-12, -44);
+    ctx.lineTo(-2, -34);
+    ctx.lineTo(5, -32);
+    ctx.lineTo(12, -44);
+    ctx.lineTo(2, -34);
+    ctx.closePath();
+    ctx.fill();
+
+    // Green Jade Eyes
+    ctx.fillStyle = '#34d399';
+    ctx.beginPath();
+    ctx.arc(-3, -23, 3, 0, Math.PI * 2);
+    ctx.arc(5, -23, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // G. Cyber Mecha Dragon (Rồng Cơ Khí Laser)
+  drawCyberDragon(ctx, app, level, wingFlap, dConfig) {
+    ctx.save();
+
+    // Titanium Wing Plates
+    ctx.save();
+    ctx.rotate(-wingFlap);
+    ctx.fillStyle = '#334155';
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(8, -10);
+    ctx.lineTo(34, -30);
+    ctx.lineTo(28, -6);
+    ctx.lineTo(14, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Armored Angular Body
+    ctx.fillStyle = app.primaryColor;
+    ctx.beginPath();
+    ctx.roundRect(-15, -16, 30, 32, 6);
+    ctx.fill();
+
+    // Arc Reactor Core on Chest
+    const pulse = Math.sin(this.animTime * 8) * 2;
+    ctx.fillStyle = '#38bdf8';
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 10 + pulse;
+    ctx.beginPath();
+    ctx.arc(0, 0, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Angular Head
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(-11, -32, 22, 18, 4);
+    ctx.fill();
+
+    // Laser Visor Slit
+    ctx.fillStyle = '#22c55e';
+    ctx.shadowColor = '#22c55e';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(-8, -25, 16, 4);
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+
+  // H. Standard Enhanced Dragon
   drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig) {
     // Wing Back
     ctx.save();
@@ -953,6 +1240,61 @@ class DragonCanvasRenderer {
     ctx.arc(-3, -23, 2.5, 0, Math.PI * 2);
     ctx.arc(5, -23, 2.5, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  // --- Static Universal Dragon Avatar Renderer for UI Modals / Cards / Arena ---
+  static renderDragonToCanvas(canvas, dConfig, level = 1, options = {}) {
+    if (!canvas || !dConfig) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.save();
+
+    // Circular Glow Backing
+    const glow = dConfig.appearance?.glow || 'rgba(245, 158, 11, 0.4)';
+    const grad = ctx.createRadialGradient(w / 2, h / 2 + 5, 4, w / 2, h / 2 + 5, w * 0.45);
+    grad.addColorStop(0, glow.replace('1)', '0.35)').replace('0.9)', '0.35)'));
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(w / 2, h / 2 + 5, w * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (!DragonCanvasRenderer._dummy) {
+      DragonCanvasRenderer._dummy = new DragonCanvasRenderer(null);
+    }
+    const d = DragonCanvasRenderer._dummy;
+    d.ctx = ctx;
+    d.animTime = options.animTime || (Date.now() / 1000);
+
+    const scale = options.scale || (w / 105);
+    ctx.translate(w / 2, h / 2 + 8);
+    ctx.scale(scale, scale);
+
+    const wingFlap = Math.sin(d.animTime * 6) * 0.25;
+    const app = dConfig.appearance;
+
+    if (app.isBone) {
+      d.drawSkeletalDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isHydra) {
+      d.drawHydraDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isPhoenix) {
+      d.drawPhoenixDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isCosmic) {
+      d.drawCosmicDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isDemon) {
+      d.drawDemonDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isLeviathan) {
+      d.drawLeviathanDragon(ctx, app, level, wingFlap, dConfig);
+    } else if (app.isCyber || app.isArmored) {
+      d.drawCyberDragon(ctx, app, level, wingFlap, dConfig);
+    } else {
+      d.drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig);
+    }
+
+    ctx.restore();
   }
 
   drawGoldBubble(x, y, goldAmount) {

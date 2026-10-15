@@ -177,6 +177,51 @@ const HABITATS_DB = {
     ],
     desc: 'Bàn tế xương cổ đại phát ánh dạ quang, nơi ở lý tưởng của Tộc Rồng Xương.'
   },
+  habitat_dark: {
+    id: 'habitat_dark',
+    name: 'Hắc Ám Vực',
+    element: 'DARK',
+    icon: '🌑',
+    costGold: 3500,
+    costGems: 15,
+    reqLevel: 4,
+    levels: [
+      { level: 1, maxDragons: 2, maxGold: 2200, upgradeCost: 3000 },
+      { level: 2, maxDragons: 3, maxGold: 5500, upgradeCost: 6000 },
+      { level: 3, maxDragons: 4, maxGold: 11000, upgradeCost: 0 }
+    ],
+    desc: 'Hố sâu u tối tích tụ bóng đêm ngàn năm cho rồng hệ Hắc Ám.'
+  },
+  habitat_light: {
+    id: 'habitat_light',
+    name: 'Quang Thần Điện',
+    element: 'LIGHT',
+    icon: '☀️',
+    costGold: 3500,
+    costGems: 15,
+    reqLevel: 4,
+    levels: [
+      { level: 1, maxDragons: 2, maxGold: 2200, upgradeCost: 3000 },
+      { level: 2, maxDragons: 3, maxGold: 5500, upgradeCost: 6000 },
+      { level: 3, maxDragons: 4, maxGold: 11000, upgradeCost: 0 }
+    ],
+    desc: 'Điện thờ ánh sáng rực rỡ thu hút hào quang cho rồng hệ Quang.'
+  },
+  habitat_cosmic: {
+    id: 'habitat_cosmic',
+    name: 'Tinh Hà Thiên Đài',
+    element: 'LEGEND',
+    icon: '🌌',
+    costGold: 6000,
+    costGems: 30,
+    reqLevel: 7,
+    levels: [
+      { level: 1, maxDragons: 2, maxGold: 3500, upgradeCost: 5000 },
+      { level: 2, maxDragons: 3, maxGold: 8000, upgradeCost: 9000 },
+      { level: 3, maxDragons: 4, maxGold: 16000, upgradeCost: 0 }
+    ],
+    desc: 'Bệ đá thiên văn lơ lửng kết nối các vì sao tinh tú, nuôi dưỡng Thần Long.'
+  },
   habitat_rainbow: {
     id: 'habitat_rainbow',
     name: 'Thiên Cung Ngũ Hành (VIP)',
@@ -306,6 +351,18 @@ const CAMPAIGN_CHAPTERS = [
       { id: 503, name: 'Âm Dương Xung Đột', enemies: ['dragon_light', 'dragon_dark'], level: 17, rewardGold: 2600, rewardFood: 2000, rewardExp: 750 },
       { id: 504, name: 'Đấu Trường Long Vương', enemies: ['dragon_frostfire', 'dragon_laser', 'dragon_dark'], level: 18, rewardGold: 3500, rewardFood: 2700, rewardExp: 900 },
       { id: 505, name: 'Thần Long Hoàng Kim (Trùm Cuối)', enemies: ['dragon_light', 'dragon_golden', 'dragon_dark'], level: 20, rewardGold: 6000, rewardFood: 5000, rewardExp: 1500, rewardGems: 50 }
+    ]
+  },
+  {
+    chapter: 6,
+    title: 'Ải 6: Đảo Long Cốt Thần Bí (Tộc Rồng Xương VIP)',
+    desc: 'Vượt qua thử thách sinh tử tại vùng đất của Tộc Rồng Xương và Thần Thú Cổ Đại.',
+    stages: [
+      { id: 601, name: 'Lối Vào Mộ Rồng', enemies: ['dragon_ancient_bone'], level: 18, rewardGold: 3000, rewardFood: 2200, rewardExp: 800 },
+      { id: 602, name: 'Sương Đêm Hắc Cốt', enemies: ['dragon_ancient_bone', 'dragon_frost_bone'], level: 19, rewardGold: 4000, rewardFood: 3000, rewardExp: 1000 },
+      { id: 603, name: 'Cơn Thịnh Nộ Ngân Long', enemies: ['dragon_silver_bone', 'dragon_armored'], level: 21, rewardGold: 5500, rewardFood: 4200, rewardExp: 1300 },
+      { id: 604, name: 'Huyết Ngục Hắc Ma', enemies: ['dragon_blood_bone', 'dragon_demon', 'dragon_hydra'], level: 23, rewardGold: 7500, rewardFood: 5500, rewardExp: 1800 },
+      { id: 605, name: 'Hoàng Kim Cốt Long & Tinh Hà Thần Long (Đại Đế)', enemies: ['dragon_silver_bone', 'dragon_golden_bone', 'dragon_cosmic'], level: 25, rewardGold: 15000, rewardFood: 12000, rewardExp: 3500, rewardGems: 100 }
     ]
   }
 ];

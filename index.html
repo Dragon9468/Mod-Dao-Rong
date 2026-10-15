@@ -67,6 +67,9 @@
 
       <!-- Quick Control Tools -->
       <div class="quick-tools">
+        <button class="icon-btn" id="btn-giftcode" onclick="openSaveModal()" title="Nhận Quà VIP (Rồng Xương Vàng & Bạc)" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; box-shadow: 0 0 12px rgba(245, 158, 11, 0.6); animation: bounce 2s infinite;">
+          <i class="fa-solid fa-gift"></i>
+        </button>
         <button class="icon-btn" id="btn-toggle-sound" title="Bật / Tắt Âm Thanh">
           <i class="fa-solid fa-volume-high"></i>
         </button>
@@ -365,13 +368,30 @@
 
         <textarea id="save-code-box" rows="5" placeholder="Dán mã sao lưu vào đây..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0b0f19; color: #a5b4fc; font-family: monospace; font-size: 12px; margin-bottom: 14px; resize: none;"></textarea>
 
-        <div style="display: flex; gap: 12px;">
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
           <button class="btn-buy" style="flex: 1;" onclick="exportSaveData()">
             📤 Xuất Mã Sao Lưu
           </button>
           <button class="btn-buy" style="flex: 1; background: linear-gradient(135deg, #10b981, #059669); color: #fff;" onclick="importSaveData()">
             📥 Nạp Lại Dữ Liệu Save
           </button>
+        </div>
+
+        <!-- VIP GIFTCODE SECTION -->
+        <div style="padding-top: 16px; border-top: 1px solid var(--border);">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+            <i class="fa-solid fa-gift" style="color: #fbbf24; font-size: 18px;"></i>
+            <h4 style="font-size: 14px; font-weight: 800; color: #fbbf24;">Nhập GiftCode Đặc Quyền VIP (Nhận Rồng Xương Vàng & Bạc)</h4>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+            Nhập mã <b style="color: #f59e0b;">VIPZINGME</b> hoặc <b style="color: #f59e0b;">RONGXUONG</b> để nhận ngay <b>Rồng Xương Vàng, Rồng Xương Bạc</b>, Chuồng Long Cốt Đài + 50.000 Vàng & 500 Kim Cương! Hoặc nhập <b style="color: #38bdf8;">DRAGON9468</b> để nhận Tinh Hà Long & Huyết Cốt Long.
+          </p>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="giftcode-input" placeholder="Ví dụ: VIPZINGME" style="flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: #0b0f19; color: #fbbf24; font-size: 14px; font-weight: 800; text-transform: uppercase;">
+            <button class="btn-buy" style="max-width: 140px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #000;" onclick="handleRedeemCode()">
+              🎁 Nhận Quà
+            </button>
+          </div>
         </div>
       </div>
     </div>
