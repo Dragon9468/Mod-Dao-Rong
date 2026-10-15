@@ -2,11 +2,10 @@
 title Khoi Chay Mod Dao Rong Desktop
 cd /d "%~dp0"
 
-echo Dang khoi dong Mod Dao Rong...
-npx electron .
-
-if %ERRORLEVEL% NEQ 0 (
-    echo.
-    echo [Loi] Neu chua cai dat electron, hay chay lenh: npm install
-    pause
+if exist "dist\win-unpacked\Mod Đảo Rồng.exe" (
+    echo Dang khoi dong Mod Dao Rong Standalone EXE...
+    start "" "dist\win-unpacked\Mod Đảo Rồng.exe"
+) else (
+    echo Dang khoi dong qua Electron...
+    npx electron .
 )
