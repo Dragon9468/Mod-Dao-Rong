@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mod Đảo Rồng - Tái Hiện Huyền Thoại Zing Me | Dragon Island Online</title>
+  <meta name="description" content="Mod Đảo Rồng - Tựa game nuôi rồng, lai tạo giống mới và chiến đấu theo lượt kinh điển thời Zing Me. Chơi ngay trên trình duyệt cùng bạn bè hoặc tải bản cài đặt Windows EXE.">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- PeerJS for WebRTC P2P Multiplayer (Free, No Server Needed) -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
+  <!-- Custom Game Styling -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="game-container">
+    <!-- Web-Level Exit Button Back to Main Portal pgame.dragon9468.com -->
+    <a href="/" class="web-exit-link" title="Quay về trang chủ PGame">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Về Trang Chủ</span>
+    </a>
+
+    <!-- Top Resource HUD -->
+    <header class="top-hud">
+      <!-- Player Profile Info -->
+      <div class="player-profile-badge">
+        <div class="player-avatar" id="hud-player-avatar">👑</div>
+        <div class="player-meta">
+          <div class="player-name" id="hud-player-name">Luyện Rồng Sư</div>
+          <div class="player-level-bar">
+            <span id="hud-player-level">Cấp 1</span>
+            <div class="exp-bar-track">
+              <div class="exp-bar-fill" id="hud-exp-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Currencies Group -->
+      <div class="currencies-group">
+        <!-- Gold -->
+        <div class="currency-pill gold" title="Vàng Đảo Rồng">
+          <span class="currency-icon">💰</span>
+          <span id="hud-gold">600</span>
+        </div>
+        <!-- Gems -->
+        <div class="currency-pill gems" title="Kim Cương Thần Thoại">
+          <span class="currency-icon">💎</span>
+          <span id="hud-gems">25</span>
+        </div>
+        <!-- Food -->
+        <div class="currency-pill food" title="Thức Ăn Nuôi Rồng">
+          <span class="currency-icon">🍓</span>
+          <span id="hud-food">200</span>
+        </div>
+      </div>
+
+      <!-- Quick Control Tools -->
+      <div class="quick-tools">
+        <button class="icon-btn" id="btn-toggle-sound" title="Bật / Tắt Âm Thanh">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+        <button class="icon-btn" id="btn-toggle-fullscreen" title="Toàn Màn Hình">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Island Navigator (Floating Center-Top) -->
+    <div class="island-navigator">
+      <button class="nav-arrow-btn" onclick="prevIsland()" title="Đảo Trước">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <div class="current-island-title" id="current-island-name">Đảo Khởi Nguyên</div>
+      <button class="nav-arrow-btn" onclick="nextIsland()" title="Đảo Kế Tiếp">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Banner Notification -->
+    <div id="banner-notification">
+      <i class="fa-solid fa-crown"></i>
+      <span>Chào mừng bạn đến với Mod Đảo Rồng!</span>
+    </div>
+
+    <!-- Interactive World Canvas -->
+    <canvas id="world-canvas"></canvas>
+
+    <!-- Bottom Action Dock -->
+    <nav class="bottom-dock">
+      <button class="dock-btn" id="dock-shop">
+        <div class="btn-icon-wrap icon-shop"><i class="fa-solid fa-store"></i></div>
+        <span class="btn-label">Cửa Hàng</span>
+      </button>
+
+      <button class="dock-btn" id="dock-farm">
+        <div class="btn-icon-wrap icon-farm"><i class="fa-solid fa-seedling"></i></div>
+        <span class="btn-label">Nông Trại</span>
+      </button>
+
+      <button class="dock-btn" id="dock-breed">
+        <div class="btn-icon-wrap icon-breed"><i class="fa-solid fa-heart"></i></div>
+        <span class="btn-label">Lai Rồng</span>
+      </button>
+
+      <button class="dock-btn" id="dock-hatch">
+        <div class="btn-icon-wrap icon-hatch"><i class="fa-solid fa-egg"></i></div>
+        <span class="btn-label">Ấp Trứng</span>
+      </button>
+
+      <button class="dock-btn" id="dock-battle">
+        <div class="btn-icon-wrap icon-battle"><i class="fa-solid fa-shield-halved"></i></div>
+        <span class="btn-label">Vượt Ải</span>
+      </button>
+
+      <button class="dock-btn" id="dock-multi">
+        <div class="btn-icon-wrap icon-multi"><i class="fa-solid fa-users"></i></div>
+        <span class="btn-label">Bạn Bè</span>
+      </button>
+
+      <button class="dock-btn" id="dock-save">
+        <div class="btn-icon-wrap icon-save"><i class="fa-solid fa-floppy-disk"></i></div>
+        <span class="btn-label">Lưu Trữ</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- ==================== MODALS SYSTEM ==================== -->
+
+  <!-- 1. SHOP MODAL -->
+  <div class="modal-overlay" id="shop-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-store" style="color: var(--primary); font-size: 22px;"></i>
+          <h3>Cửa Hàng Đảo Rồng</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('shop-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs" id="shop-tabs">
+          <button class="tab-pill active" data-tab="dragons" onclick="renderShopTab('dragons')">Trứng Rồng</button>
+          <button class="tab-pill" data-tab="habitats" onclick="renderShopTab('habitats')">Chuồng Nuôi</button>
+          <button class="tab-pill" data-tab="islands" onclick="renderShopTab('islands')">Khai Phá Đảo Mới</button>
+        </div>
+        <div id="shop-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HABITAT INSPECTION & FEEDING MODAL -->
+  <div class="modal-overlay" id="habitat-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-campground" style="color: var(--water); font-size: 22px;"></i>
+          <h3>Thông Tin Chuồng Nuôi</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('habitat-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body" id="habitat-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 3. FARM & CROPS MODAL -->
+  <div class="modal-overlay" id="farm-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-seedling" style="color: var(--leaf); font-size: 22px;"></i>
+          <h3>Vườn Nông Trại - Gieo Hạt Thức Ăn</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('farm-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <div id="farm-crops-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. BREEDING CAVE MODAL -->
+  <div class="modal-overlay" id="breeding-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-heart" style="color: var(--accent); font-size: 22px;"></i>
+          <h3>Động Lai Rồng Thần Bí</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('breeding-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body" id="breeding-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 5. HATCHERY MODAL -->
+  <div class="modal-overlay" id="hatchery-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-egg" style="color: #ec4899; font-size: 22px;"></i>
+          <h3>Ổ Ấp Trứng Rồng</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('hatchery-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body" id="hatchery-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 6. CAMPAIGN CHAPTERS MODAL -->
+  <div class="modal-overlay" id="campaign-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-shield-halved" style="color: var(--accent); font-size: 22px;"></i>
+          <h3>Viễn Chinh - Vượt Ải Cốt Truyện</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('campaign-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body" id="campaign-chapters-list"></div>
+    </div>
+  </div>
+
+  <!-- 7. TEAM SELECT MODAL -->
+  <div class="modal-overlay" id="team-select-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-users-gear" style="color: var(--primary); font-size: 22px;"></i>
+          <h3>Chọn Đội Hình Xuất Trận (Tối đa 3 Rồng)</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('team-select-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <span id="team-count-text" style="font-weight: 800; color: var(--primary);">Đã chọn: 0 / 3</span>
+          <button class="btn-buy" style="max-width: 180px;" onclick="startBattleWithSelectedTeam()">
+            ⚔️ Vào Chiến Đấu
+          </button>
+        </div>
+        <div id="team-select-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. BATTLE ARENA MODAL (Turn-based Combat Screen) -->
+  <div class="modal-overlay" id="battle-screen-modal">
+    <div class="modal-card battle-arena-modal">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-fire-flame-curved" style="color: var(--accent); font-size: 22px;"></i>
+          <h3>Sàn Đấu Lôi Đài Rồng</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('battle-screen-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <!-- Floating Combat Announcement -->
+        <div id="battle-status-text" style="text-align: center; font-size: 13px; font-weight: 700; color: #fbbf24; margin-bottom: 8px;">
+          Đến lượt của bạn! Chọn chiêu thức và nhấp vào rồng đối thủ để tấn công.
+        </div>
+
+        <!-- 2.5D Battle Arena Canvas / Rows -->
+        <div class="battle-field">
+          <!-- Enemy Team Row (Top) -->
+          <div class="battle-team-row" id="battle-enemies-row"></div>
+
+          <!-- Player Team Row (Bottom) -->
+          <div class="battle-team-row" id="battle-player-row"></div>
+        </div>
+
+        <!-- Action Command Buttons -->
+        <div class="battle-action-bar">
+          <button class="btn-skill" id="btn-skill-normal" onclick="selectSkillAction('normal')">
+            <b>Cào Rồng</b>
+            <span>Đòn Đánh Thường</span>
+          </button>
+          <button class="btn-skill" id="btn-skill-elem" onclick="selectSkillAction('elemental')">
+            <b>Tuyệt Kỹ Nguyên Tố</b>
+            <span>25 Nộ</span>
+          </button>
+          <button class="btn-skill ultimate" id="btn-skill-ult" onclick="selectSkillAction('ultimate')">
+            <b>Nộ Long Bộc Phát 🔥</b>
+            <span>100 Nộ MAX</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. MULTIPLAYER P2P (PLAY WITH FRIENDS) MODAL -->
+  <div class="modal-overlay" id="multiplayer-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-network-wired" style="color: #6366f1; font-size: 22px;"></i>
+          <h3>Chơi Cùng Bạn Bè Trực Tuyến (P2P WebRTC)</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('multiplayer-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">
+          Kết nối trực tiếp thiết bị của bạn với bạn bè thông qua giao thức WebRTC tốc độ cao, hoàn toàn miễn phí và không cần tạo tài khoản!
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <!-- Option A: Host Room -->
+          <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+            <i class="fa-solid fa-tower-broadcast" style="font-size: 36px; color: #818cf8; margin-bottom: 10px;"></i>
+            <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">Tạo Phòng Thi Đấu</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Tạo mã phòng hoặc gửi link để bạn bè bấm vào chơi cùng.</p>
+            <button class="btn-buy" style="margin: 0 auto; background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff;" onclick="createP2PRoom()">
+              📡 Bắt Đầu Tạo Phòng
+            </button>
+
+            <div id="room-share-box" style="display: none; margin-top: 14px; text-align: left;">
+              <div style="font-size: 12px; color: var(--text-muted);">Mã phòng của bạn:</div>
+              <div id="my-room-code-display" style="font-size: 24px; font-weight: 900; color: #fbbf24; letter-spacing: 2px; margin: 4px 0;">------</div>
+              <input type="text" id="share-link-input" readonly style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: #0b0f19; color: #fff; font-size: 12px; margin-bottom: 6px;">
+              <button class="btn-buy" style="font-size: 12px; padding: 6px 10px;" onclick="copyShareLink()">
+                📋 Sao Chép Link Gửi Bạn Bè
+              </button>
+            </div>
+            <div id="room-status-text" style="font-size: 11px; color: var(--primary); margin-top: 8px;"></div>
+          </div>
+
+          <!-- Option B: Join Room -->
+          <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; text-align: center;">
+            <i class="fa-solid fa-right-to-bracket" style="font-size: 36px; color: #10b981; margin-bottom: 10px;"></i>
+            <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">Vào Phòng Bạn Bè</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Nhập 6 ký tự mã phòng do bạn bè gửi cho bạn.</p>
+            <input type="text" id="join-code-input" placeholder="Ví dụ: RONG88" maxlength="10" style="width: 100%; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: #0b0f19; color: #fbbf24; font-size: 16px; font-weight: 800; text-align: center; text-transform: uppercase; margin-bottom: 10px;">
+            <button class="btn-buy" style="margin: 0 auto; background: linear-gradient(135deg, #10b981, #059669); color: #fff;" onclick="joinP2PRoom()">
+              🚀 Kết Nối Ngay
+            </button>
+            <div id="join-status-text" style="font-size: 11px; color: #10b981; margin-top: 8px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. SAVE BACKUP MODAL -->
+  <div class="modal-overlay" id="save-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="fa-solid fa-floppy-disk" style="color: #0ea5e9; font-size: 22px;"></i>
+          <h3>Sao Lưu & Đồng Bộ Dữ Liệu</h3>
+        </div>
+        <div class="close-modal-btn" onclick="closeModal('save-modal')"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">
+          Game tự động lưu trên trình duyệt (LocalStorage). Bạn có thể bấm "Xuất Mã Sao Lưu" để lưu sang máy khác hoặc nạp lại khi chuyển đổi giữa bản Web và bản Desktop EXE.
+        </p>
+
+        <textarea id="save-code-box" rows="5" placeholder="Dán mã sao lưu vào đây..." style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #0b0f19; color: #a5b4fc; font-family: monospace; font-size: 12px; margin-bottom: 14px; resize: none;"></textarea>
+
+        <div style="display: flex; gap: 12px;">
+          <button class="btn-buy" style="flex: 1;" onclick="exportSaveData()">
+            📤 Xuất Mã Sao Lưu
+          </button>
+          <button class="btn-buy" style="flex: 1; background: linear-gradient(135deg, #10b981, #059669); color: #fff;" onclick="importSaveData()">
+            📥 Nạp Lại Dữ Liệu Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Logic Scripts -->
+  <script src="js/audio.js"></script>
+  <script src="js/dragons_data.js"></script>
+  <script src="js/islands_data.js"></script>
+  <script src="js/p2p_network.js"></script>
+  <script src="js/battle_engine.js"></script>
+  <script src="js/game_state.js"></script>
+  <script src="js/canvas_renderer.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,638 @@
+/**
+ * Dữ Liệu Rồng, Nguyên Tố, Công Thức Lai Giống & Kỹ Năng - Đảo Rồng Zing Me
+ */
+
+const ELEMENTS = {
+  FIRE: {
+    id: 'FIRE',
+    name: 'Hỏa',
+    icon: '🔥',
+    color: '#ef4444',
+    bgGradient: 'linear-gradient(135deg, #ef4444, #dc2626)',
+    advantage: 'LEAF',
+    disadvantage: 'WATER',
+    desc: 'Thiêu rụi Thảo Mộc nhưng bị Thủy Triều khắc chế.'
+  },
+  WATER: {
+    id: 'WATER',
+    name: 'Thủy',
+    icon: '💧',
+    color: '#06b6d4',
+    bgGradient: 'linear-gradient(135deg, #06b6d4, #0284c7)',
+    advantage: 'FIRE',
+    disadvantage: 'THUNDER',
+    desc: 'Dập tắt Ngọn Lửa nhưng bị Sấm Sét dẫn điện gây sát thương.'
+  },
+  LEAF: {
+    id: 'LEAF',
+    name: 'Mộc',
+    icon: '🍃',
+    color: '#10b981',
+    bgGradient: 'linear-gradient(135deg, #10b981, #059669)',
+    advantage: 'EARTH',
+    disadvantage: 'FIRE',
+    desc: 'Rễ cây hút kiệt Đất Đá nhưng dễ bị Hỏa Thần thiêu cháy.'
+  },
+  EARTH: {
+    id: 'EARTH',
+    name: 'Thổ',
+    icon: '⛰️',
+    color: '#b45309',
+    bgGradient: 'linear-gradient(135deg, #d97706, #b45309)',
+    advantage: 'THUNDER',
+    disadvantage: 'LEAF',
+    desc: 'Đất đá cản đứng Sấm Sét nhưng bị Rễ Cây Thảo Mộc xuyên thủng.'
+  },
+  THUNDER: {
+    id: 'THUNDER',
+    name: 'Lôi',
+    icon: '⚡',
+    color: '#eab308',
+    bgGradient: 'linear-gradient(135deg, #facc15, #ca8a04)',
+    advantage: 'WATER',
+    disadvantage: 'EARTH',
+    desc: 'Điện kích lan truyền qua Nước nhưng bị Đất Đá triệt tiêu.'
+  },
+  ICE: {
+    id: 'ICE',
+    name: 'Băng',
+    icon: '❄️',
+    color: '#38bdf8',
+    bgGradient: 'linear-gradient(135deg, #38bdf8, #0284c7)',
+    advantage: 'FIRE',
+    disadvantage: 'LEAF',
+    desc: 'Hàn khí đóng băng vạn vật.'
+  },
+  LIGHT: {
+    id: 'LIGHT',
+    name: 'Quang',
+    icon: '☀️',
+    color: '#fbbf24',
+    bgGradient: 'linear-gradient(135deg, #fde047, #f59e0b)',
+    advantage: 'DARK',
+    disadvantage: 'DARK',
+    desc: 'Ánh hào quang thánh khiết, tương khắc kép cùng Hắc Ám.'
+  },
+  DARK: {
+    id: 'DARK',
+    name: 'Ám',
+    icon: '🌑',
+    color: '#8b5cf6',
+    bgGradient: 'linear-gradient(135deg, #a855f7, #6d28d9)',
+    advantage: 'LIGHT',
+    disadvantage: 'LIGHT',
+    desc: 'Bóng tối vực thẳm nuốt chửng ánh sáng.'
+  },
+  LEGEND: {
+    id: 'LEGEND',
+    name: 'Thần Long',
+    icon: '👑',
+    color: '#f59e0b',
+    bgGradient: 'linear-gradient(135deg, #f59e0b, #ec4899)',
+    advantage: 'ALL',
+    disadvantage: 'NONE',
+    desc: 'Chúa tể muôn loài rồng, sở hữu sức mạnh áp đảo ngũ hành.'
+  }
+};
+
+const DRAGONS_DB = {
+  // --- 1. RỒNG CƠ BẢN (1 SAO) ---
+  dragon_fire: {
+    id: 'dragon_fire',
+    name: 'Rồng Lửa (Hỏa Long)',
+    title: 'Ngọn Lửa Bất Diệt',
+    elements: ['FIRE'],
+    rarity: 1,
+    rarityLabel: 'Cơ Bản ⭐',
+    hatchTime: 15, // 15 seconds
+    shopPriceGold: 100,
+    shopPriceGems: 0,
+    baseStats: { hp: 120, atk: 28, def: 12, spd: 14 },
+    baseGoldRate: 6, // 6 gold/min
+    skills: {
+      normal: { name: 'Cào Lửa', power: 30, desc: 'Tấn công móng vuốt bốc lửa.' },
+      elemental: { name: 'Hỏa Cầu', power: 55, element: 'FIRE', desc: 'Phun cầu lửa rực cháy thiêu đối thủ.' },
+      ultimate: { name: 'Hỏa Ngục Bùng Nổ', power: 110, element: 'FIRE', desc: 'Triệu hồi biển lửa địa ngục.' }
+    },
+    appearance: {
+      primaryColor: '#ef4444',
+      secondaryColor: '#f97316',
+      eyeColor: '#fef08a',
+      hornColor: '#7f1d1d',
+      bellyColor: '#fed7aa',
+      glow: 'rgba(239, 68, 68, 0.6)'
+    },
+    desc: 'Loài rồng dũng mãnh sinh ra từ miệng núi lửa nóng rực. Tính cách bộc trực, thích thức ăn cay nóng.'
+  },
+
+  dragon_water: {
+    id: 'dragon_water',
+    name: 'Rồng Nước (Thủy Long)',
+    title: 'Hơi Thở Biển Khơi',
+    elements: ['WATER'],
+    rarity: 1,
+    rarityLabel: 'Cơ Bản ⭐',
+    hatchTime: 20,
+    shopPriceGold: 150,
+    shopPriceGems: 0,
+    baseStats: { hp: 140, atk: 22, def: 18, spd: 12 },
+    baseGoldRate: 6,
+    skills: {
+      normal: { name: 'Tạt Nước', power: 25, desc: 'Quẫy đuôi tạt dòng nước xiết.' },
+      elemental: { name: 'Thủy Triều', power: 50, element: 'WATER', desc: 'Cuộn trào sóng nước đè bẹp kẻ thù.' },
+      ultimate: { name: 'Đại Hồng Thủy', power: 100, element: 'WATER', desc: 'Sóng thần dâng cao cuốn phăng sàn đấu.' }
+    },
+    appearance: {
+      primaryColor: '#06b6d4',
+      secondaryColor: '#38bdf8',
+      eyeColor: '#a5f3fc',
+      hornColor: '#164e63',
+      bellyColor: '#cffafe',
+      glow: 'rgba(6, 182, 212, 0.6)'
+    },
+    desc: 'Loài rồng uyển chuyển bơi lội dưới đáy hồ sâu. Da dẻ mát lạnh và mang tính cách hiền hòa.'
+  },
+
+  dragon_leaf: {
+    id: 'dragon_leaf',
+    name: 'Rồng Lá (Thảo Long)',
+    title: 'Vệ Thần Rừng Xanh',
+    elements: ['LEAF'],
+    rarity: 1,
+    rarityLabel: 'Cơ Bản ⭐',
+    hatchTime: 20,
+    shopPriceGold: 150,
+    shopPriceGems: 0,
+    baseStats: { hp: 130, atk: 24, def: 16, spd: 13 },
+    baseGoldRate: 6,
+    skills: {
+      normal: { name: 'Roi Gai', power: 28, desc: 'Dùng dây leo quất mạnh.' },
+      elemental: { name: 'Phi Diệp Trảm', power: 52, element: 'LEAF', desc: 'Bắn loạt lá sắc bén như ngàn phi tiêu.' },
+      ultimate: { name: 'Cơn Bão Cây Rừng', power: 105, element: 'LEAF', desc: 'Gọi rễ cây cổ thụ khổng lồ trói nghiền địch.' }
+    },
+    appearance: {
+      primaryColor: '#10b981',
+      secondaryColor: '#34d399',
+      eyeColor: '#fef08a',
+      hornColor: '#064e3b',
+      bellyColor: '#d1fae5',
+      glow: 'rgba(16, 185, 129, 0.6)'
+    },
+    desc: 'Được sinh ra từ nụ hoa ngàn năm trên đỉnh núi cao. Thích tắm nắng và bảo vệ các sinh linh nhỏ.'
+  },
+
+  dragon_earth: {
+    id: 'dragon_earth',
+    name: 'Rồng Đất (Nham Long)',
+    title: 'Khiên Chắn Bất Hoại',
+    elements: ['EARTH'],
+    rarity: 1,
+    rarityLabel: 'Cơ Bản ⭐',
+    hatchTime: 25,
+    shopPriceGold: 200,
+    shopPriceGems: 0,
+    baseStats: { hp: 160, atk: 20, def: 24, spd: 9 },
+    baseGoldRate: 7,
+    skills: {
+      normal: { name: 'Đấm Đá', power: 26, desc: 'Vung nắm đấm bằng đá hoa cương.' },
+      elemental: { name: 'Thạch Chấn', power: 48, element: 'EARTH', desc: 'Dộng đất làm rung chuyển mặt trận.' },
+      ultimate: { name: 'Mưa Thiên Thạch', power: 105, element: 'EARTH', desc: 'Gọi khối đá khổng lồ giáng xuống từ tầng mây.' }
+    },
+    appearance: {
+      primaryColor: '#d97706',
+      secondaryColor: '#b45309',
+      eyeColor: '#fed7aa',
+      hornColor: '#451a03',
+      bellyColor: '#fde68a',
+      glow: 'rgba(217, 119, 6, 0.6)'
+    },
+    desc: 'Lưng bọc lớp giáp đá siêu dày không vũ khí nào xuyên qua được. Bước đi nặng nề nhưng vô cùng vững vàng.'
+  },
+
+  dragon_thunder: {
+    id: 'dragon_thunder',
+    name: 'Rồng Sấm (Lôi Long)',
+    title: 'Tốc Độ Ánh Sáng',
+    elements: ['THUNDER'],
+    rarity: 2,
+    rarityLabel: 'Hiếm ⭐⭐',
+    hatchTime: 40,
+    shopPriceGold: 500,
+    shopPriceGems: 10,
+    baseStats: { hp: 125, atk: 35, def: 11, spd: 22 },
+    baseGoldRate: 10,
+    skills: {
+      normal: { name: 'Cú Chích Điện', power: 32, desc: 'Tia tĩnh điện châm chích.' },
+      elemental: { name: 'Sấm Sét Rền Vang', power: 65, element: 'THUNDER', desc: 'Giáng sấm chớp giật tê liệt toàn thân.' },
+      ultimate: { name: 'Vạn Lôi Oanh Tạc', power: 125, element: 'THUNDER', desc: 'Phóng hàng vạn vôn điện quét sạch chiến trường.' }
+    },
+    appearance: {
+      primaryColor: '#eab308',
+      secondaryColor: '#fde047',
+      eyeColor: '#ffffff',
+      hornColor: '#713f12',
+      bellyColor: '#fef9c3',
+      glow: 'rgba(234, 179, 8, 0.7)'
+    },
+    desc: 'Di chuyển chớp nhoáng giữa những đám mây giông. Bộ lông tích điện luôn kêu răng rắc.'
+  },
+
+  // --- 2. RỒNG LAI NGUYÊN TỐ (2 SAO & 3 SAO) ---
+  dragon_lava: {
+    id: 'dragon_lava',
+    name: 'Rồng Dung Nham',
+    title: 'Hỏa Diệm Nham Thạch',
+    elements: ['FIRE', 'EARTH'],
+    rarity: 2,
+    rarityLabel: 'Lai Hiếm ⭐⭐',
+    hatchTime: 60,
+    shopPriceGold: 800,
+    shopPriceGems: 15,
+    baseStats: { hp: 170, atk: 32, def: 22, spd: 11 },
+    baseGoldRate: 12,
+    skills: {
+      normal: { name: 'Quăng Đá Nóng', power: 34, desc: 'Ném đá bốc khói hừng hực.' },
+      elemental: { name: 'Dòng Nham Thạch', power: 68, element: 'FIRE', desc: 'Phun dung nham làm tan chảy phòng ngự.' },
+      ultimate: { name: 'Núi Lửa Phun Trào', power: 130, element: 'FIRE', desc: 'Cột dung nham bùng nổ hủy diệt.' }
+    },
+    appearance: {
+      primaryColor: '#c2410c',
+      secondaryColor: '#f97316',
+      eyeColor: '#fef08a',
+      hornColor: '#1c1917',
+      bellyColor: '#ea580c',
+      glow: 'rgba(234, 88, 12, 0.7)'
+    },
+    desc: 'Kết quả lai giống giữa Lửa và Đất. Máu rồng chảy đỏ rực như dung nham nóng ngàn độ.'
+  },
+
+  dragon_mud: {
+    id: 'dragon_mud',
+    name: 'Rồng Bùn Lầy',
+    title: 'Đầm Lầy U Ám',
+    elements: ['WATER', 'EARTH'],
+    rarity: 2,
+    rarityLabel: 'Lai Hiếm ⭐⭐',
+    hatchTime: 50,
+    shopPriceGold: 700,
+    shopPriceGems: 12,
+    baseStats: { hp: 185, atk: 25, def: 26, spd: 9 },
+    baseGoldRate: 11,
+    skills: {
+      normal: { name: 'Ném Bùn', power: 28, desc: 'Ném bùn dơ làm mù mắt.' },
+      elemental: { name: 'Vũng Lầy Lún', power: 60, element: 'EARTH', desc: 'Bẫy đối thủ chìm vào bùn sâu.' },
+      ultimate: { name: 'Cơn Bão Bùn', power: 120, element: 'WATER', desc: 'Đè bẹp tất cả trong thác bùn khổng lồ.' }
+    },
+    appearance: {
+      primaryColor: '#78350f',
+      secondaryColor: '#0284c7',
+      eyeColor: '#fef08a',
+      hornColor: '#451a03',
+      bellyColor: '#92400e',
+      glow: 'rgba(120, 53, 15, 0.6)'
+    },
+    desc: 'Lai giữa Thủy Long và Nham Long. Cơ thể dính nhớp có khả năng hấp thụ chấn động cực tốt.'
+  },
+
+  dragon_steam: {
+    id: 'dragon_steam',
+    name: 'Rồng Hơi Nước',
+    title: 'Sương Mù Nhiệt Độ',
+    elements: ['FIRE', 'WATER'],
+    rarity: 2,
+    rarityLabel: 'Lai Hiếm ⭐⭐',
+    hatchTime: 65,
+    shopPriceGold: 850,
+    shopPriceGems: 18,
+    baseStats: { hp: 145, atk: 33, def: 17, spd: 16 },
+    baseGoldRate: 13,
+    skills: {
+      normal: { name: 'Phun Hơi Nóng', power: 30, desc: 'Hơi nước sôi bỏng rát.' },
+      elemental: { name: 'Màn Sương Ảo Ảnh', power: 62, element: 'WATER', desc: 'Hơi nước mịt mù gây sát thương diện rộng.' },
+      ultimate: { name: 'Vụ Nổ Áp Suất Nồi Hơi', power: 135, element: 'FIRE', desc: 'Áp suất nhiệt cực đại phát nổ vang trời.' }
+    },
+    appearance: {
+      primaryColor: '#f43f5e',
+      secondaryColor: '#38bdf8',
+      eyeColor: '#ffffff',
+      hornColor: '#9f1239',
+      bellyColor: '#fda4af',
+      glow: 'rgba(244, 63, 94, 0.7)'
+    },
+    desc: 'Sự kết hợp thần kỳ giữa Lửa và Nước. Toàn thân luôn bốc lên những làn khói trắng ma mị.'
+  },
+
+  dragon_coral: {
+    id: 'dragon_coral',
+    name: 'Rồng San Hô',
+    title: 'Thủy Thảo Rực Rỡ',
+    elements: ['WATER', 'LEAF'],
+    rarity: 2,
+    rarityLabel: 'Lai Hiếm ⭐⭐',
+    hatchTime: 55,
+    shopPriceGold: 750,
+    shopPriceGems: 14,
+    baseStats: { hp: 160, atk: 28, def: 20, spd: 14 },
+    baseGoldRate: 12,
+    skills: {
+      normal: { name: 'Gai San Hô', power: 30, desc: 'Đâm gai san hô sắc bén.' },
+      elemental: { name: 'Thủy Thảo Trận', power: 64, element: 'LEAF', desc: 'Rong biển san hô quấn siết kẻ thù.' },
+      ultimate: { name: 'Rạn San Hô Thần Thoại', power: 125, element: 'WATER', desc: 'Triệu hồi sức mạnh đại dương hồi phục và phản đòn.' }
+    },
+    appearance: {
+      primaryColor: '#0ea5e9',
+      secondaryColor: '#10b981',
+      eyeColor: '#fef08a',
+      hornColor: '#ec4899',
+      bellyColor: '#bae6fd',
+      glow: 'rgba(14, 165, 233, 0.7)'
+    },
+    desc: 'Lưng mọc những nhánh san hô hồng phát sáng tuyệt đẹp. Được xưng tụng là loài rồng lộng lẫy của đại dương.'
+  },
+
+  dragon_storm: {
+    id: 'dragon_storm',
+    name: 'Rồng Bão Tố',
+    title: 'Chúa Tể Cuồng Phong',
+    elements: ['THUNDER', 'WATER'],
+    rarity: 3,
+    rarityLabel: 'Quý Tộc ⭐⭐⭐',
+    hatchTime: 90,
+    shopPriceGold: 1500,
+    shopPriceGems: 25,
+    baseStats: { hp: 155, atk: 42, def: 18, spd: 20 },
+    baseGoldRate: 18,
+    skills: {
+      normal: { name: 'Sóng Điện', power: 36, desc: 'Luồng sóng mang dòng điện cực mạnh.' },
+      elemental: { name: 'Bão Điện Giật', power: 78, element: 'THUNDER', desc: 'Bão tố cuồn cuộn kèm sấm sét giáng liên tiếp.' },
+      ultimate: { name: 'Cơn Bão Cấp 15', power: 155, element: 'WATER', desc: 'Vòi rồng khổng lồ nuốt chửng toàn bộ sàn đấu.' }
+    },
+    appearance: {
+      primaryColor: '#3b82f6',
+      secondaryColor: '#eab308',
+      eyeColor: '#ffffff',
+      hornColor: '#1e3a8a',
+      bellyColor: '#93c5fd',
+      glow: 'rgba(59, 130, 246, 0.8)'
+    },
+    desc: 'Mỗi khi vỗ cánh là tạo ra những cơn giông bão sấm chớp rền vang. Rất được các Luyện Rồng Sư săn đón.'
+  },
+
+  dragon_laser: {
+    id: 'dragon_laser',
+    name: 'Rồng Lôi Hỏa Laser',
+    title: 'Tia Hủy Diệt',
+    elements: ['THUNDER', 'FIRE'],
+    rarity: 3,
+    rarityLabel: 'Quý Tộc ⭐⭐⭐',
+    hatchTime: 100,
+    shopPriceGold: 1800,
+    shopPriceGems: 30,
+    baseStats: { hp: 140, atk: 48, def: 15, spd: 24 },
+    baseGoldRate: 20,
+    skills: {
+      normal: { name: 'Bắn Hạt Năng Lượng', power: 38, desc: 'Bắn chùm photon nóng rực.' },
+      elemental: { name: 'Chùm Tia Laser', power: 85, element: 'FIRE', desc: 'Chiếu tia laser xuyên phá mọi giáp trụ.' },
+      ultimate: { name: 'Pháo Plasma Hạt Nhân', power: 170, element: 'THUNDER', desc: 'Tập trung toàn bộ năng lượng bắn chùm sáng hủy diệt.' }
+    },
+    appearance: {
+      primaryColor: '#ef4444',
+      secondaryColor: '#eab308',
+      eyeColor: '#38bdf8',
+      hornColor: '#7f1d1d',
+      bellyColor: '#fef08a',
+      glow: 'rgba(234, 179, 8, 0.9)'
+    },
+    desc: 'Hội tụ sức mạnh bùng nổ của Lửa và vận tốc kinh hoàng của Sét. Mắt phát ra tia laser đỏ rực đáng sợ.'
+  },
+
+  // --- 3. RỒNG ĐẶC BIỆT & SỬ THI (4 SAO) ---
+  dragon_ice: {
+    id: 'dragon_ice',
+    name: 'Rồng Băng Tinh',
+    title: 'Hàn Băng Vĩnh Cửu',
+    elements: ['ICE'],
+    rarity: 3,
+    rarityLabel: 'Quý Tộc ⭐⭐⭐',
+    hatchTime: 90,
+    shopPriceGold: 2000,
+    shopPriceGems: 35,
+    baseStats: { hp: 165, atk: 38, def: 24, spd: 15 },
+    baseGoldRate: 19,
+    skills: {
+      normal: { name: 'Mũi Cực Hàn', power: 35, desc: 'Đâm mũi băng buốt giá.' },
+      elemental: { name: 'Bão Tuyết Cực Địa', power: 76, element: 'ICE', desc: 'Thổi bão tuyết làm chậm và đông cứng đối phương.' },
+      ultimate: { name: 'Băng Trụ Ngàn Năm', power: 150, element: 'ICE', desc: 'Dựng rừng băng nhọn đâm xuyên sàn đấu.' }
+    },
+    appearance: {
+      primaryColor: '#67e8f9',
+      secondaryColor: '#e0f2fe',
+      eyeColor: '#0284c7',
+      hornColor: '#0891b2',
+      bellyColor: '#cffafe',
+      glow: 'rgba(103, 232, 249, 0.8)'
+    },
+    desc: 'Cư ngụ tại đỉnh núi tuyết quanh năm không tan. Hơi thở phả ra khiến không khí lập tức kết tinh thành tuyết trắng.'
+  },
+
+  dragon_frostfire: {
+    id: 'dragon_frostfire',
+    name: 'Rồng Băng Hỏa (Hàn Diệm)',
+    title: 'Nghịch Lý Băng Lửa',
+    elements: ['ICE', 'FIRE'],
+    rarity: 4,
+    rarityLabel: 'Sử Thi ⭐⭐⭐⭐',
+    hatchTime: 150,
+    shopPriceGold: 3500,
+    shopPriceGems: 60,
+    baseStats: { hp: 180, atk: 52, def: 26, spd: 18 },
+    baseGoldRate: 28,
+    skills: {
+      normal: { name: 'Hàn Hỏa Tiễn', power: 42, desc: 'Bắn mũi tên lửa xanh băng giá.' },
+      elemental: { name: 'Xung Kích Băng Lửa', power: 95, element: 'FIRE', desc: 'Băng lửa xung đột tạo chấn động kinh hoàng.' },
+      ultimate: { name: 'Hàn Ngục Hỏa Diệm', power: 190, element: 'ICE', desc: 'Phong tỏa đối thủ trong lồng băng rồi thiêu cháy từ bên trong.' }
+    },
+    appearance: {
+      primaryColor: '#06b6d4',
+      secondaryColor: '#f43f5e',
+      eyeColor: '#fef08a',
+      hornColor: '#164e63',
+      bellyColor: '#ffe4e6',
+      glow: 'rgba(6, 182, 212, 0.9)'
+    },
+    desc: 'Sở hữu hai thuộc tính đối lập cùng tồn tại: Nửa thân trái lạnh cóng, nửa thân phải rực lửa. Cực kỳ hiếm thấy!'
+  },
+
+  dragon_light: {
+    id: 'dragon_light',
+    name: 'Rồng Ánh Sáng (Bạch Long)',
+    title: 'Hào Quang Cứu Rỗi',
+    elements: ['LIGHT'],
+    rarity: 4,
+    rarityLabel: 'Sử Thi ⭐⭐⭐⭐',
+    hatchTime: 180,
+    shopPriceGold: 4500,
+    shopPriceGems: 80,
+    baseStats: { hp: 195, atk: 55, def: 28, spd: 22 },
+    baseGoldRate: 32,
+    skills: {
+      normal: { name: 'Tia Sáng Thánh', power: 45, desc: 'Tia sáng ban phước gây sát thương kẻ địch.' },
+      elemental: { name: 'Thần Phạt', power: 100, element: 'LIGHT', desc: 'Cột ánh sáng giáng xuống trừng phạt bóng tối.' },
+      ultimate: { name: 'Thái Dương Bừng Nở', power: 200, element: 'LIGHT', desc: 'Tỏa hào quang chói lòa làm mù và tiêu diệt tà ác.' }
+    },
+    appearance: {
+      primaryColor: '#fef08a',
+      secondaryColor: '#ffffff',
+      eyeColor: '#38bdf8',
+      hornColor: '#ca8a04',
+      bellyColor: '#fef9c3',
+      glow: 'rgba(254, 240, 138, 0.95)'
+    },
+    desc: 'Được sinh ra từ ánh rạng đông đầu tiên của thế giới Đảo Rồng. Toàn thân tỏa bạch kim tinh khôi.'
+  },
+
+  dragon_dark: {
+    id: 'dragon_dark',
+    name: 'Rồng Hắc Ám (Dạ Xoa Long)',
+    title: 'Bóng Tối Vực Thẳm',
+    elements: ['DARK'],
+    rarity: 4,
+    rarityLabel: 'Sử Thi ⭐⭐⭐⭐',
+    hatchTime: 180,
+    shopPriceGold: 4500,
+    shopPriceGems: 80,
+    baseStats: { hp: 190, atk: 58, def: 25, spd: 23 },
+    baseGoldRate: 32,
+    skills: {
+      normal: { name: 'Móng Vuốt Đêm', power: 46, desc: 'Cào xé bằng vuốt hắc ám.' },
+      elemental: { name: 'Hố Đen Hút Hồn', power: 105, element: 'DARK', desc: 'Tạo hố đen bóng đêm nuốt chửng sinh lực.' },
+      ultimate: { name: 'Khải Huyền Vực Thẳm', power: 205, element: 'DARK', desc: 'Bóng tối bao trùm nuốt trọn ánh sáng đối thủ.' }
+    },
+    appearance: {
+      primaryColor: '#3b0764',
+      secondaryColor: '#8b5cf6',
+      eyeColor: '#ef4444',
+      hornColor: '#1e1b4b',
+      bellyColor: '#581c87',
+      glow: 'rgba(139, 92, 246, 0.9)'
+    },
+    desc: 'Thống trị cõi bóng tối u tịch. Đôi cánh đen tuyền chứa đựng bí mật của ngàn năm viễn cổ.'
+  },
+
+  // --- 4. RỒNG THẦN THOẠI (5 SAO) ---
+  dragon_golden: {
+    id: 'dragon_golden',
+    name: 'Thần Long Hoàng Kim',
+    title: 'Vương Giả Đảo Rồng',
+    elements: ['LEGEND'],
+    rarity: 5,
+    rarityLabel: 'Thần Thoại 👑⭐⭐⭐⭐⭐',
+    hatchTime: 300,
+    shopPriceGold: 10000,
+    shopPriceGems: 200,
+    baseStats: { hp: 260, atk: 75, def: 40, spd: 28 },
+    baseGoldRate: 60,
+    skills: {
+      normal: { name: 'Vuốt Hoàng Kim', power: 55, desc: 'Đòn đánh dát vàng uy lực tối thượng.' },
+      elemental: { name: 'Thần Long Hộ Thể', power: 125, element: 'LEGEND', desc: 'Rồng vàng gầm thét tăng công và giáng đòn hủy diệt.' },
+      ultimate: { name: 'Long Ngâm Thiên Địa', power: 260, element: 'LEGEND', desc: 'Chiêu thức huyền thoại của Chúa Tể Đảo Rồng.' }
+    },
+    appearance: {
+      primaryColor: '#f59e0b',
+      secondaryColor: '#fbbf24',
+      eyeColor: '#ec4899',
+      hornColor: '#78350f',
+      bellyColor: '#fef3c7',
+      glow: 'rgba(245, 158, 11, 1)'
+    },
+    desc: 'Linh vật tối cao của Đảo Rồng Zing Me. Ai sở hữu được Thần Long Hoàng Kim sẽ được vinh danh là Đệ Nhất Luyện Rồng Sư!'
+  }
+};
+
+/**
+ * Công thức Lai Tạo Giống Rồng (Breeding Matrix)
+ * Xác định trứng rồng con sinh ra dựa trên cặp bố mẹ
+ */
+const BREEDING_RECIPES = [
+  // Fire + Earth -> Lava
+  { parents: ['FIRE', 'EARTH'], result: 'dragon_lava', chance: 0.65 },
+  // Water + Earth -> Mud
+  { parents: ['WATER', 'EARTH'], result: 'dragon_mud', chance: 0.65 },
+  // Fire + Water -> Steam
+  { parents: ['FIRE', 'WATER'], result: 'dragon_steam', chance: 0.60 },
+  // Water + Leaf -> Coral
+  { parents: ['WATER', 'LEAF'], result: 'dragon_coral', chance: 0.65 },
+  // Thunder + Water -> Storm
+  { parents: ['THUNDER', 'WATER'], result: 'dragon_storm', chance: 0.50 },
+  // Thunder + Fire -> Laser
+  { parents: ['THUNDER', 'FIRE'], result: 'dragon_laser', chance: 0.50 },
+  // Ice + Fire -> Frostfire
+  { parents: ['ICE', 'FIRE'], result: 'dragon_frostfire', chance: 0.40 },
+  // Light + Dark -> Golden (Tỉ lệ hiếm 15%)
+  { parents: ['LIGHT', 'DARK'], result: 'dragon_golden', chance: 0.15 },
+  // Bất kỳ 2 rồng 3-4 sao lai với nhau có tỉ lệ ra Rồng Ánh Sáng / Bóng Tối
+  { parents: ['THUNDER', 'ICE'], result: 'dragon_light', chance: 0.25 },
+  { parents: ['FIRE', 'ICE'], result: 'dragon_dark', chance: 0.25 }
+];
+
+// Helper tính toán rồng con từ 2 rồng bố mẹ
+function calculateBreedingResult(dragonA, dragonB) {
+  const elementsA = dragonA.elements;
+  const elementsB = dragonB.elements;
+  const combined = [...new Set([...elementsA, ...elementsB])];
+
+  // Kiểm tra công thức đặc biệt
+  for (const recipe of BREEDING_RECIPES) {
+    const hasP1 = combined.includes(recipe.parents[0]);
+    const hasP2 = combined.includes(recipe.parents[1]);
+    if (hasP1 && hasP2) {
+      if (Math.random() <= recipe.chance) {
+        return recipe.result;
+      }
+    }
+  }
+
+  // Nếu trượt công thức lai đặc biệt, ngẫu nhiên ra 1 trong 2 giống bố mẹ hoặc rồng cơ bản thuộc hệ
+  const fallbackPool = [dragonA.id, dragonB.id];
+  if (combined.includes('FIRE')) fallbackPool.push('dragon_fire');
+  if (combined.includes('WATER')) fallbackPool.push('dragon_water');
+  if (combined.includes('LEAF')) fallbackPool.push('dragon_leaf');
+  if (combined.includes('EARTH')) fallbackPool.push('dragon_earth');
+  if (combined.includes('THUNDER')) fallbackPool.push('dragon_thunder');
+
+  const randomIdx = Math.floor(Math.random() * fallbackPool.length);
+  return fallbackPool[randomIdx];
+}
+
+// Tính lượng thức ăn cần để lên cấp tiếp theo
+function getFoodToNextLevel(level) {
+  return Math.round(15 * Math.pow(level, 1.6));
+}
+
+// Tính chỉ số rồng theo cấp độ
+function calculateDragonStats(baseStats, level) {
+  const multiplier = 1 + (level - 1) * 0.22;
+  return {
+    hp: Math.round(baseStats.hp * multiplier),
+    maxHp: Math.round(baseStats.hp * multiplier),
+    atk: Math.round(baseStats.atk * multiplier),
+    def: Math.round(baseStats.def * multiplier),
+    spd: Math.round(baseStats.spd * (1 + (level - 1) * 0.08))
+  };
+}
+
+// Xác định hình thái rồng theo cấp độ (Baby, Young, Adult, Elder)
+function getEvolutionStage(level) {
+  if (level < 4) return { stage: 1, name: 'Rồng Con (Baby)', scale: 0.75 };
+  if (level < 7) return { stage: 2, name: 'Niên Thiếu (Young)', scale: 0.95 };
+  if (level < 10) return { stage: 3, name: 'Trưởng Thành (Adult)', scale: 1.15 };
+  return { stage: 4, name: 'Siêu Cấp (Titan)', scale: 1.35 };
+}
+
+window.ELEMENTS = ELEMENTS;
+window.DRAGONS_DB = DRAGONS_DB;
+window.BREEDING_RECIPES = BREEDING_RECIPES;
+window.calculateBreedingResult = calculateBreedingResult;
+window.getFoodToNextLevel = getFoodToNextLevel;
+window.calculateDragonStats = calculateDragonStats;
+window.getEvolutionStage = getEvolutionStage;

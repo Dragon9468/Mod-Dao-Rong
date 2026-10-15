@@ -1,0 +1,44 @@
+{
+  "name": "mod-dao-rong",
+  "version": "1.0.0",
+  "description": "Mod Đảo Rồng - Tái hiện tựa game huyền thoại Zing Me trên nền tảng Web & Desktop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:exe": "electron-builder --win --x64"
+  },
+  "keywords": [
+    "dao-rong",
+    "dragon-island",
+    "zingme",
+    "game",
+    "electron"
+  ],
+  "author": "Dragon9468",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.dragon9468.daorong",
+    "productName": "Mod Đảo Rồng",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Mod Đảo Rồng"
+    }
+  }
+}
