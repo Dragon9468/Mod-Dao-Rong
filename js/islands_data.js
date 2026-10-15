@@ -162,6 +162,21 @@ const HABITATS_DB = {
     ],
     desc: 'Băng đăng lạnh buốt cho rồng hệ Băng.'
   },
+  habitat_bone: {
+    id: 'habitat_bone',
+    name: 'Long Cốt Đài',
+    element: 'BONE',
+    icon: '💀',
+    costGold: 4000,
+    costGems: 20,
+    reqLevel: 5,
+    levels: [
+      { level: 1, maxDragons: 2, maxGold: 2500, upgradeCost: 3500 },
+      { level: 2, maxDragons: 3, maxGold: 6000, upgradeCost: 7000 },
+      { level: 3, maxDragons: 4, maxGold: 12000, upgradeCost: 0 }
+    ],
+    desc: 'Bàn tế xương cổ đại phát ánh dạ quang, nơi ở lý tưởng của Tộc Rồng Xương.'
+  },
   habitat_rainbow: {
     id: 'habitat_rainbow',
     name: 'Thiên Cung Ngũ Hành (VIP)',

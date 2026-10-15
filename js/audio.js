@@ -305,8 +305,23 @@ class DragonSoundEngine {
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(110, now);
         osc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
-        gain.gain.setValueAtTime(0.35 * this.sfxVolume, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.38);
+      case 'BONE':
+        // Bone rattle & piercing spear
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(450, now);
+        osc.frequency.setValueAtTime(900, now + 0.03);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+        gain.gain.setValueAtTime(0.32 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.24);
+        break;
+
+      case 'STEEL':
+        // Metallic clash clang
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.28);
+        gain.gain.setValueAtTime(0.3 * this.sfxVolume, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
         break;
 
       default:

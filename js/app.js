@@ -589,19 +589,23 @@ window.selectHabitatToHatch = function(eggId) {
   const egg = window.GameInstance.state.hatchery.find(e => e.id === eggId);
   if (!egg) return;
 
+  const dragonConfig = DRAGONS_DB[egg.dragonId];
   const habitats = window.GameInstance.state.habitats;
   const eligibleHabitats = habitats.filter(h => {
     const config = HABITATS_DB[h.type];
     const levelConfig = config.levels[h.level - 1];
-    return h.dragons.length < levelConfig.maxDragons;
+    const spaceOk = h.dragons.length < levelConfig.maxDragons;
+    const elementOk = (config.element === 'ALL' || (dragonConfig && dragonConfig.elements.includes(config.element)));
+    return spaceOk && elementOk;
   });
 
   if (eligibleHabitats.length === 0) {
-    alert('Tất cả chuồng rồng hiện tại đều đã đầy! Hãy mua thêm chuồng hoặc nâng cấp chuồng.');
+    const neededElemName = dragonConfig ? dragonConfig.elements.map(e => ELEMENTS[e]?.name || e).join('/') : 'phù hợp';
+    alert(`Không tìm thấy chuồng rồng hệ [${neededElemName}] còn chỗ trống! Hãy mua thêm chuồng hệ ${neededElemName} hoặc Thiên Cung Ngũ Hành.`);
     return;
   }
 
-  // Auto hatch into first eligible habitat or prompt
+  // Auto hatch into first eligible habitat
   const targetHab = eligibleHabitats[0];
   const res = window.GameInstance.hatchEgg(eggId, targetHab.id);
   if (res.success) {
