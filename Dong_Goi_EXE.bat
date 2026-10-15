@@ -9,11 +9,15 @@ echo.
 echo Dang kiem tra dependencies va dong goi bang electron-builder...
 call npm run build:exe
 
-if %ERRORLEVEL% EQU 0 (
+if exist "dist\win-unpacked\Mod Đảo Rồng.exe" (
+    echo.
+    echo Dang tao goi Portable ZIP...
+    powershell -NoProfile -Command "Compress-Archive -Path 'dist\win-unpacked\*' -DestinationPath 'dist\Mod-Dao-Rong-Windows-x64.zip' -Force"
     echo.
     echo =========================================================
-    echo [THANH CONG] File .exe da duoc tao trong thu muc: dist/
-    echo Ban co the chay file .exe hoac ban portable truc tiep!
+    echo [THANH CONG] File .exe va file .zip da tao trong: dist/
+    echo 1. Thu muc chay truc tiep: dist\win-unpacked\Mod Đảo Rồng.exe
+    echo 2. File nen mang di choi:   dist\Mod-Dao-Rong-Windows-x64.zip
     echo =========================================================
 ) else (
     echo.
