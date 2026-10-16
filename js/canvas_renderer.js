@@ -389,12 +389,13 @@ class DragonCanvasRenderer {
   }
 
   // --- Core Structures ---
+  // --- Core Structures ---
   drawBreedingCave(cave) {
     const ctx = this.ctx;
-    const x = this.width * 0.18;
-    const y = this.height * 0.42;
-    const w = 110;
-    const h = 95;
+    const x = this.width * 0.17;
+    const y = this.height * 0.40;
+    const w = 130;
+    const h = 115;
 
     this.interactiveEntities.push({
       type: 'BREEDING_CAVE',
@@ -406,51 +407,107 @@ class DragonCanvasRenderer {
     });
 
     ctx.save();
-    ctx.fillStyle = '#475569';
+    // 1. Rocky Cavern Cliff Base
+    const rockGrad = ctx.createRadialGradient(x, y + 10, 10, x, y + 10, 65);
+    rockGrad.addColorStop(0, '#475569');
+    rockGrad.addColorStop(0.7, '#1e293b');
+    rockGrad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = rockGrad;
     ctx.beginPath();
-    ctx.arc(x, y + 10, 50, Math.PI, 0);
-    ctx.lineTo(x + 50, y + 42);
-    ctx.lineTo(x - 50, y + 42);
+    ctx.moveTo(x - 58, y + 45);
+    ctx.quadraticCurveTo(x - 62, y - 15, x - 25, y - 35);
+    ctx.quadraticCurveTo(x, y - 48, x + 30, y - 35);
+    ctx.quadraticCurveTo(x + 65, y - 10, x + 60, y + 45);
     ctx.closePath();
     ctx.fill();
 
-    ctx.fillStyle = '#090d16';
+    // Mossy overlay on top of cave
+    ctx.fillStyle = '#15803d';
     ctx.beginPath();
-    ctx.arc(x, y + 15, 36, Math.PI, 0);
-    ctx.lineTo(x + 36, y + 42);
-    ctx.lineTo(x - 36, y + 42);
+    ctx.ellipse(x, y - 34, 38, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Cavern Entrance (Deep dark maw with glowing heart magma)
+    const caveDark = ctx.createLinearGradient(0, y - 10, 0, y + 45);
+    caveDark.addColorStop(0, '#020617');
+    caveDark.addColorStop(0.6, '#0f172a');
+    caveDark.addColorStop(1, '#e11d48');
+    ctx.fillStyle = caveDark;
+    ctx.beginPath();
+    ctx.moveTo(x - 38, y + 45);
+    ctx.quadraticCurveTo(x - 42, y + 5, x, y - 15);
+    ctx.quadraticCurveTo(x + 42, y + 5, x + 38, y + 45);
     ctx.closePath();
     ctx.fill();
 
-    const pulse = Math.sin(this.animTime * 3) * 3;
-    ctx.fillStyle = '#f43f5e';
+    // Glowing Runic Carvings on Left and Right Stone Pillars
+    const runeGlow = Math.sin(this.animTime * 4) * 0.3 + 0.7;
+    ctx.save();
+    ctx.fillStyle = `rgba(244, 63, 94, ${runeGlow})`;
     ctx.shadowColor = '#f43f5e';
-    ctx.shadowBlur = 12 + pulse;
-    ctx.font = '24px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('💖', x, y - 36);
-    ctx.shadowBlur = 0;
+    ctx.shadowBlur = 10;
+    ctx.font = 'bold 11px Arial';
+    ctx.fillText('ᚠ', x - 46, y + 15);
+    ctx.fillText('ᚱ', x - 46, y + 32);
+    ctx.fillText('ᛟ', x + 42, y + 15);
+    ctx.fillText('ᚾ', x + 42, y + 32);
+    ctx.restore();
 
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
+    // 3. Floating Heart Crystal Hearth
+    const pulse = Math.sin(this.animTime * 4) * 4;
+    const crystalBob = Math.sin(this.animTime * 2.5) * 4;
+    ctx.save();
+    ctx.translate(x, y - 42 + crystalBob);
+    ctx.shadowColor = '#f43f5e';
+    ctx.shadowBlur = 18 + pulse;
+    // Outer halo
+    ctx.fillStyle = 'rgba(244, 63, 94, 0.3)';
+    ctx.beginPath();
+    ctx.arc(0, 0, 18 + pulse * 0.5, 0, Math.PI * 2);
+    ctx.fill();
+    // Heart Shape
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.bezierCurveTo(-10, -8, -16, 2, 0, 14);
+    ctx.bezierCurveTo(16, 2, 10, -8, 0, 4);
+    ctx.fill();
+    // Inner crystal highlight
+    ctx.fillStyle = '#ffe4e6';
+    ctx.beginPath();
+    ctx.arc(-3, 3, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 4. Wooden Signboard with Title
+    ctx.fillStyle = '#78350f';
+    ctx.beginPath();
+    ctx.roundRect(x - 52, y + 48, 104, 20, 6);
+    ctx.fill();
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Động Lai Giống', x, y + 58);
+    ctx.fillText('Động Lai Giống', x, y + 62);
 
     if (cave.isReady) {
-      this.drawSpeechBubble(x, y - 55, 'Trứng Xong! 🥚', '#10b981');
+      this.drawSpeechBubble(x, y - 65, 'Trứng Xong! 🥚', '#10b981');
     } else if (cave.startTime) {
       const remaining = Math.max(0, Math.ceil((cave.readyTime - Date.now()) / 1000));
-      this.drawSpeechBubble(x, y - 55, `Đang Lai: ${remaining}s`, '#f59e0b');
+      this.drawSpeechBubble(x, y - 65, `Đang Lai: ${remaining}s`, '#f59e0b');
     }
     ctx.restore();
   }
 
   drawHatchery(hatchery) {
     const ctx = this.ctx;
-    const x = this.width * 0.82;
-    const y = this.height * 0.42;
-    const w = 110;
-    const h = 95;
+    const x = this.width * 0.83;
+    const y = this.height * 0.40;
+    const w = 130;
+    const h = 115;
 
     this.interactiveEntities.push({
       type: 'HATCHERY',
@@ -462,55 +519,139 @@ class DragonCanvasRenderer {
     });
 
     ctx.save();
-    ctx.fillStyle = '#ca8a04';
+    // 1. Wooden Arch Pole with Warm Hanging Lantern
+    ctx.strokeStyle = '#78350f';
+    ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.ellipse(x, y + 25, 50, 24, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#a16207';
+    ctx.moveTo(x - 45, y + 42);
+    ctx.lineTo(x - 45, y - 28);
+    ctx.quadraticCurveTo(x - 45, y - 48, x - 26, y - 48);
     ctx.stroke();
 
+    // Lantern
+    const lanternFlicker = Math.sin(this.animTime * 8) * 3;
+    ctx.fillStyle = '#f59e0b';
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 14 + lanternFlicker;
+    ctx.beginPath();
+    ctx.roundRect(x - 30, y - 44, 10, 15, 3);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // 2. Straw & Golden Woven Dragon Nest Base
+    const nestGrad = ctx.createLinearGradient(x - 55, y, x + 55, y + 40);
+    nestGrad.addColorStop(0, '#b45309');
+    nestGrad.addColorStop(0.5, '#d97706');
+    nestGrad.addColorStop(1, '#92400e');
+    ctx.fillStyle = nestGrad;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 24, 56, 26, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#78350f';
+    ctx.stroke();
+
+    // Straw Rim Texture
+    ctx.strokeStyle = '#fef08a';
+    ctx.lineWidth = 2;
+    for (let angle = 0; angle < Math.PI * 2; angle += 0.35) {
+      const rx = Math.cos(angle) * 54 + x;
+      const ry = Math.sin(angle) * 25 + (y + 24);
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx + Math.cos(angle) * 8, ry + Math.sin(angle) * 4);
+      ctx.stroke();
+    }
+
+    // Warm embers inside nest
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+    ctx.beginPath();
+    ctx.ellipse(x, y + 20, 38, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. Dragon Eggs inside Nest
     if (hatchery.length === 0) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-      ctx.font = '12px Plus Jakarta Sans';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+      ctx.font = 'bold 11px Plus Jakarta Sans';
       ctx.textAlign = 'center';
-      ctx.fillText('(Trống)', x, y + 25);
+      ctx.fillText('(Tổ Ấp Trống)', x, y + 24);
     } else {
       hatchery.slice(0, 3).forEach((egg, idx) => {
-        const offX = (idx - 1) * 22;
+        const offX = (idx - 1) * 26;
         const eggConfig = DRAGONS_DB[egg.dragonId] || DRAGONS_DB.dragon_fire;
         const color = eggConfig.appearance.primaryColor;
-        const rock = egg.isReady ? Math.sin(this.animTime * 6 + idx) * 0.15 : 0;
+        const rock = egg.isReady ? Math.sin(this.animTime * 6 + idx * 2) * 0.18 : 0;
 
         ctx.save();
         ctx.translate(x + offX, y + 10);
         ctx.rotate(rock);
-        ctx.fillStyle = color;
+
+        // Egg Shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.beginPath();
-        ctx.ellipse(0, 0, 11, 15, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 14, 10, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 3D Shaded Egg
+        const eggGrad = ctx.createRadialGradient(-3, -4, 2, 0, 0, 16);
+        eggGrad.addColorStop(0, '#ffffff');
+        eggGrad.addColorStop(0.35, color);
+        eggGrad.addColorStop(1, '#0f172a');
+        ctx.fillStyle = eggGrad;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 12, 17, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 1.5;
         ctx.stroke();
 
-        // Bone pattern on egg if Bone Dragon
+        // Cracks and rays if ready
+        if (egg.isReady) {
+          ctx.strokeStyle = '#fef08a';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(-4, -6);
+          ctx.lineTo(2, 0);
+          ctx.lineTo(-2, 6);
+          ctx.stroke();
+
+          // Golden sparkle
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#fbbf24';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(0, -18, 3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        // Bone Dragon Egg special skull emblem
         if (eggConfig.elements && eggConfig.elements.includes('BONE')) {
           ctx.fillStyle = '#fff';
-          ctx.font = '9px Arial';
+          ctx.font = '10px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText('💀', 0, 3);
+          ctx.fillText('💀', 0, 4);
         }
         ctx.restore();
       });
     }
 
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px Plus Jakarta Sans, sans-serif';
+    // 4. Wooden Signboard
+    ctx.fillStyle = '#78350f';
+    ctx.beginPath();
+    ctx.roundRect(x - 48, y + 48, 96, 20, 6);
+    ctx.fill();
+    ctx.strokeStyle = '#fbbf24';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('Ổ Ấp Trứng', x, y + 58);
+    ctx.fillText('Ổ Ấp Trứng', x, y + 62);
 
     if (hatchery.some(e => e.isReady)) {
-      this.drawSpeechBubble(x, y - 40, 'Ấp Nở! 🐣', '#ec4899');
+      this.drawSpeechBubble(x, y - 55, 'Ấp Nở! 🐣', '#ec4899');
     }
     ctx.restore();
   }
@@ -518,14 +659,14 @@ class DragonCanvasRenderer {
   drawFarms(farms) {
     const ctx = this.ctx;
     const startX = this.width * 0.32;
-    const startY = this.height * 0.36;
-    const gap = 85;
+    const startY = this.height * 0.35;
+    const gap = 88;
 
     farms.forEach((farm, idx) => {
       const x = startX + idx * gap;
       const y = startY;
-      const w = 70;
-      const h = 55;
+      const w = 78;
+      const h = 60;
 
       this.interactiveEntities.push({
         type: 'FARM',
@@ -537,35 +678,82 @@ class DragonCanvasRenderer {
       });
 
       ctx.save();
-      ctx.fillStyle = '#78350f';
+      // 1. Wooden Garden Bed Frame
+      ctx.fillStyle = '#451a03';
       ctx.beginPath();
-      ctx.ellipse(x, y + 10, 34, 19, 0, 0, Math.PI * 2);
+      ctx.roundRect(x - 38, y - 10, 76, 44, 8);
       ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#451a03';
+
+      // Wooden planks border
+      ctx.strokeStyle = '#92400e';
+      ctx.lineWidth = 3;
       ctx.stroke();
 
+      // 2. Rich Dark Fertile Soil with Furrows
+      const soilGrad = ctx.createLinearGradient(0, y - 6, 0, y + 30);
+      soilGrad.addColorStop(0, '#592c0d');
+      soilGrad.addColorStop(1, '#2c1204');
+      ctx.fillStyle = soilGrad;
+      ctx.beginPath();
+      ctx.roundRect(x - 34, y - 6, 68, 36, 5);
+      ctx.fill();
+
+      // Soil ridge lines
+      ctx.strokeStyle = '#1e0c03';
+      ctx.lineWidth = 1.5;
+      for (let sy = y; sy <= y + 24; sy += 8) {
+        ctx.beginPath();
+        ctx.moveTo(x - 30, sy);
+        ctx.lineTo(x + 30, sy);
+        ctx.stroke();
+      }
+
+      // 3. Crops or Empty Plot
       if (farm.cropId) {
         const crop = CROPS_DB.find(c => c.id === farm.cropId);
         if (farm.isReady) {
-          ctx.font = '26px Arial';
+          // Ready for harvest: Bouncing plant with sparkle
+          const bounce = Math.sin(this.animTime * 6) * 3;
+          ctx.save();
+          ctx.translate(x, y + 8 + bounce);
+          ctx.font = '28px Arial';
           ctx.textAlign = 'center';
-          ctx.fillText(crop.icon, x, y + 5);
-          this.drawSpeechBubble(x, y - 24, 'Thu Hoạch!', '#10b981');
+          ctx.fillText(crop.icon, 0, 4);
+
+          // Golden Harvest Stars
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#fbbf24';
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(-18, -12, 2.5, 0, Math.PI * 2);
+          ctx.arc(18, -12, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          this.drawSpeechBubble(x, y - 30, 'Thu Hoạch!', '#10b981');
         } else {
-          ctx.font = '16px Arial';
-          ctx.textAlign = 'center';
-          ctx.fillText('🌱', x, y + 8);
+          // Growing plant
           const remaining = Math.max(0, Math.ceil((farm.readyTime - Date.now()) / 1000));
-          ctx.fillStyle = '#fff';
-          ctx.font = 'bold 10px Plus Jakarta Sans';
-          ctx.fillText(`${remaining}s`, x, y - 10);
+          ctx.font = '20px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('🌱', x, y + 10);
+
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+          ctx.beginPath();
+          ctx.roundRect(x - 24, y - 26, 48, 16, 6);
+          ctx.fill();
+          ctx.fillStyle = '#fef08a';
+          ctx.font = 'bold 9px Plus Jakarta Sans';
+          ctx.textAlign = 'center';
+          ctx.fillText(`${remaining}s`, x, y - 14);
         }
       } else {
-        ctx.fillStyle = '#fbbf24';
-        ctx.font = '18px Arial';
+        // Plus icon for planting
+        const pulse = Math.sin(this.animTime * 4) * 0.2 + 0.8;
+        ctx.fillStyle = `rgba(251, 191, 36, ${pulse})`;
+        ctx.font = 'bold 20px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('➕', x, y + 14);
+        ctx.fillText('➕', x, y + 16);
       }
       ctx.restore();
     });
@@ -583,8 +771,8 @@ class DragonCanvasRenderer {
 
     habitats.forEach((hab, idx) => {
       const pos = positions[idx % positions.length];
-      const w = 150;
-      const h = 110;
+      const w = 160;
+      const h = 120;
 
       this.interactiveEntities.push({
         type: 'HABITAT',
@@ -599,56 +787,116 @@ class DragonCanvasRenderer {
       const habConfig = HABITATS_DB[hab.type] || HABITATS_DB.habitat_fire;
       const elemConfig = ELEMENTS[habConfig.element] || ELEMENTS.FIRE;
 
-      // Habitat Ground Circle
-      ctx.fillStyle = elemConfig.color;
+      // 1. 3D Stone Altar Platform Base
+      ctx.fillStyle = '#0f172a';
       ctx.beginPath();
-      ctx.ellipse(pos.x, pos.y + 18, 68, 38, 0, 0, Math.PI * 2);
+      ctx.ellipse(pos.x, pos.y + 24, 76, 42, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#fff';
+
+      // Stone Bevel Rim
+      const stoneGrad = ctx.createLinearGradient(pos.x - 70, pos.y, pos.x + 70, pos.y + 36);
+      stoneGrad.addColorStop(0, '#475569');
+      stoneGrad.addColorStop(0.5, '#334155');
+      stoneGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = stoneGrad;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 20, 72, 38, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = '#64748b';
       ctx.stroke();
 
-      // Special Bone Habitat Altar spikes
+      // 2. Inner Elemental Terrain Pool / Crater
+      ctx.save();
+      let elemGrad;
+      if (hab.type === 'habitat_fire') {
+        elemGrad = ctx.createRadialGradient(pos.x, pos.y + 18, 5, pos.x, pos.y + 18, 55);
+        elemGrad.addColorStop(0, '#fef08a');
+        elemGrad.addColorStop(0.3, '#f97316');
+        elemGrad.addColorStop(0.8, '#dc2626');
+        elemGrad.addColorStop(1, '#450a0a');
+      } else if (hab.type === 'habitat_water') {
+        elemGrad = ctx.createRadialGradient(pos.x, pos.y + 18, 5, pos.x, pos.y + 18, 55);
+        elemGrad.addColorStop(0, '#bae6fd');
+        elemGrad.addColorStop(0.5, '#0284c7');
+        elemGrad.addColorStop(1, '#082f49');
+      } else if (hab.type === 'habitat_bone') {
+        elemGrad = ctx.createRadialGradient(pos.x, pos.y + 18, 5, pos.x, pos.y + 18, 55);
+        elemGrad.addColorStop(0, '#f8fafc');
+        elemGrad.addColorStop(0.6, '#94a3b8');
+        elemGrad.addColorStop(1, '#334155');
+      } else {
+        elemGrad = ctx.createRadialGradient(pos.x, pos.y + 18, 5, pos.x, pos.y + 18, 55);
+        elemGrad.addColorStop(0, '#ffffff');
+        elemGrad.addColorStop(0.35, elemConfig.color);
+        elemGrad.addColorStop(1, '#0f172a');
+      }
+      ctx.fillStyle = elemGrad;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 18, 62, 32, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 3. Standing Runic Stone Totems
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.roundRect(pos.x - 58, pos.y - 12, 14, 28, 4);
+      ctx.roundRect(pos.x + 44, pos.y - 12, 14, 28, 4);
+      ctx.fill();
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Totem Elemental Icons
+      ctx.font = '12px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(elemConfig.icon, pos.x - 51, pos.y + 6);
+      ctx.fillText(elemConfig.icon, pos.x + 51, pos.y + 6);
+
+      // Special Bone Habitat Ivory Spikes
       if (hab.type === 'habitat_bone') {
-        ctx.fillStyle = '#cbd5e1';
+        ctx.fillStyle = '#e2e8f0';
         ctx.beginPath();
-        ctx.moveTo(pos.x - 55, pos.y + 15);
-        ctx.lineTo(pos.x - 62, pos.y - 10);
-        ctx.lineTo(pos.x - 48, pos.y + 15);
+        ctx.moveTo(pos.x - 56, pos.y + 14);
+        ctx.lineTo(pos.x - 66, pos.y - 20);
+        ctx.lineTo(pos.x - 48, pos.y + 14);
         ctx.closePath();
         ctx.fill();
 
         ctx.beginPath();
-        ctx.moveTo(pos.x + 55, pos.y + 15);
-        ctx.lineTo(pos.x + 62, pos.y - 10);
-        ctx.lineTo(pos.x + 48, pos.y + 15);
+        ctx.moveTo(pos.x + 56, pos.y + 14);
+        ctx.lineTo(pos.x + 66, pos.y - 20);
+        ctx.lineTo(pos.x + 48, pos.y + 14);
         ctx.closePath();
         ctx.fill();
       }
 
-      ctx.font = '22px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(habConfig.icon, pos.x - 44, pos.y);
-
-      // Render Dragons inside Habitat
+      // 4. Render Dragons inside Habitat
       hab.dragons.forEach((dragon, dIdx) => {
         const dConfig = DRAGONS_DB[dragon.id] || DRAGONS_DB.dragon_fire;
-        const dOffX = (dIdx - 0.5) * 46;
+        const dOffX = (dIdx - 0.5) * 48;
         const dOffY = -8 + (dIdx % 2) * 10;
         this.drawMasterDragon(pos.x + dOffX, pos.y + dOffY, dConfig, dragon.level, dIdx);
       });
 
-      // Gold Bubble
+      // 5. 3D Shiny Gold Bubble
       if (hab.currentGold >= 10) {
-        this.drawGoldBubble(pos.x, pos.y - 45, Math.floor(hab.currentGold));
+        this.drawGoldBubble(pos.x, pos.y - 48, Math.floor(hab.currentGold));
       }
 
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 11px Plus Jakarta Sans, sans-serif';
-      ctx.shadowColor = 'rgba(0,0,0,0.8)';
-      ctx.shadowBlur = 4;
-      ctx.fillText(`${habConfig.name} (Lv.${hab.level})`, pos.x, pos.y + 44);
-      ctx.shadowBlur = 0;
+      // 6. Habitat Name & Level Badge
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+      ctx.beginPath();
+      ctx.roundRect(pos.x - 55, pos.y + 44, 110, 20, 6);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 10px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`${habConfig.name} (Lv.${hab.level})`, pos.x, pos.y + 57);
 
       ctx.restore();
     });
@@ -1375,22 +1623,33 @@ class DragonCanvasRenderer {
 
   drawGoldBubble(x, y, goldAmount) {
     const ctx = this.ctx;
-    const bob = Math.sin(this.animTime * 4) * 4;
+    const bob = Math.sin(this.animTime * 4) * 5;
     ctx.save();
     ctx.translate(x, y + bob);
 
-    ctx.fillStyle = 'rgba(251, 191, 36, 0.95)';
-    ctx.shadowColor = 'rgba(251, 191, 36, 0.8)';
-    ctx.shadowBlur = 12;
+    // Outer golden glow
+    ctx.shadowColor = '#fbbf24';
+    ctx.shadowBlur = 16;
+    // 3D Coin Badge
+    const goldGrad = ctx.createLinearGradient(0, -15, 0, 15);
+    goldGrad.addColorStop(0, '#fef08a');
+    goldGrad.addColorStop(0.4, '#f59e0b');
+    goldGrad.addColorStop(1, '#b45309');
+    ctx.fillStyle = goldGrad;
     ctx.beginPath();
-    ctx.roundRect(-30, -14, 60, 26, 13);
+    ctx.roundRect(-34, -15, 68, 30, 15);
     ctx.fill();
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
     ctx.shadowBlur = 0;
 
-    ctx.fillStyle = '#1e1b4b';
-    ctx.font = 'bold 11px Plus Jakarta Sans';
+    // Inner gold coin icon & number
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 12px Plus Jakarta Sans';
     ctx.textAlign = 'center';
-    ctx.fillText(`💰 ${goldAmount}`, 0, 4);
+    ctx.fillText(`💰 +${goldAmount}`, 0, 5);
     ctx.restore();
   }
 
