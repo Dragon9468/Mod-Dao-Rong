@@ -73,10 +73,13 @@ class DragonCanvasRenderer {
 
   getImage(src) {
     if (!src) return null;
+    const resolved = window.PGAME_CONFIG?.resolveMedia ? window.PGAME_CONFIG.resolveMedia(src) : src;
     if (this.imageCache[src]) return this.imageCache[src];
+    if (this.imageCache[resolved]) return this.imageCache[resolved];
     const img = new Image();
-    img.src = src;
+    img.src = resolved;
     this.imageCache[src] = img;
+    this.imageCache[resolved] = img;
     return img;
   }
 
@@ -1841,11 +1844,13 @@ class DragonCanvasRenderer {
     };
 
     if (imgSrc) {
-      let img = DragonCanvasRenderer._staticImgCache[imgSrc];
+      const resolved = window.PGAME_CONFIG?.resolveMedia ? window.PGAME_CONFIG.resolveMedia(imgSrc) : imgSrc;
+      let img = DragonCanvasRenderer._staticImgCache[resolved] || DragonCanvasRenderer._staticImgCache[imgSrc];
       if (!img) {
         img = new Image();
-        img.src = imgSrc;
+        img.src = resolved;
         DragonCanvasRenderer._staticImgCache[imgSrc] = img;
+        DragonCanvasRenderer._staticImgCache[resolved] = img;
       }
 
       if (img.complete && img.naturalWidth > 0) {
