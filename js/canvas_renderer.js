@@ -874,8 +874,8 @@ class DragonCanvasRenderer {
       // 4. Render Dragons inside Habitat
       hab.dragons.forEach((dragon, dIdx) => {
         const dConfig = DRAGONS_DB[dragon.id] || DRAGONS_DB.dragon_fire;
-        const dOffX = (dIdx - 0.5) * 48;
-        const dOffY = -8 + (dIdx % 2) * 10;
+        const dOffX = (dIdx - 0.5) * 52;
+        const dOffY = 2 + (dIdx % 2) * 6;
         this.drawMasterDragon(pos.x + dOffX, pos.y + dOffY, dConfig, dragon.level, dIdx);
       });
 
@@ -922,7 +922,7 @@ class DragonCanvasRenderer {
       ctx.save();
       ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
       ctx.beginPath();
-      ctx.ellipse(0, 16, 26, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 16, 28, 8, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
@@ -942,9 +942,9 @@ class DragonCanvasRenderer {
       }
 
       // 3. Draw Authentic 2D Sprite
-      const dw = 78;
-      const dh = 78;
-      ctx.drawImage(img, -dw / 2, -dh + 14, dw, dh);
+      const dw = 92;
+      const dh = 92;
+      ctx.drawImage(img, -dw / 2, -dh + 18, dw, dh);
     } else {
       const wingFlap = Math.sin(this.animTime * 8 + indexOffset) * 0.28;
       if (app.isBone) {

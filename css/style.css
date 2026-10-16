@@ -708,12 +708,8 @@ body, html {
 }
 
 /* Web Exit Button for Portal */
-.web-exit-link {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 20;
-  background: rgba(239, 68, 68, 0.85);
+.web-exit-btn, .web-exit-link {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #fff;
   padding: 8px 16px;
@@ -721,18 +717,27 @@ body, html {
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
   transition: all 0.2s;
+  cursor: pointer;
 }
 
-.web-exit-link:hover {
+.web-exit-btn:hover, .web-exit-link:hover {
   background: #dc2626;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
+.hud-brand-logo img {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hud-brand-logo:hover img {
+  transform: scale(1.08) rotate(-2deg);
 }
 
 /* Responsive adjustments */
