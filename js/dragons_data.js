@@ -120,6 +120,7 @@ const DRAGONS_DB = {
   dragon_fire: {
     id: 'dragon_fire',
     name: 'Rồng Lửa (Hỏa Long)',
+    image: 'assets/dragons/rong_lua.png',
     title: 'Ngọn Lửa Bất Diệt',
     elements: ['FIRE'],
     rarity: 1,
@@ -148,6 +149,7 @@ const DRAGONS_DB = {
   dragon_water: {
     id: 'dragon_water',
     name: 'Rồng Nước (Thủy Long)',
+    image: 'assets/dragons/rong_nuoc.png',
     title: 'Hơi Thở Biển Khơi',
     elements: ['WATER'],
     rarity: 1,
@@ -176,6 +178,7 @@ const DRAGONS_DB = {
   dragon_leaf: {
     id: 'dragon_leaf',
     name: 'Rồng Lá (Thảo Long)',
+    image: 'assets/dragons/rong_la.png',
     title: 'Vệ Thần Rừng Xanh',
     elements: ['LEAF'],
     rarity: 1,
@@ -204,6 +207,7 @@ const DRAGONS_DB = {
   dragon_earth: {
     id: 'dragon_earth',
     name: 'Rồng Đất (Nham Long)',
+    image: 'assets/dragons/rong_dat.png',
     title: 'Khiên Chắn Bất Hoại',
     elements: ['EARTH'],
     rarity: 1,
@@ -232,6 +236,7 @@ const DRAGONS_DB = {
   dragon_thunder: {
     id: 'dragon_thunder',
     name: 'Rồng Sấm (Lôi Long)',
+    image: 'assets/dragons/rong_sam.png',
     title: 'Tốc Độ Ánh Sáng',
     elements: ['THUNDER'],
     rarity: 2,
@@ -261,6 +266,7 @@ const DRAGONS_DB = {
   dragon_lava: {
     id: 'dragon_lava',
     name: 'Rồng Dung Nham',
+    image: 'assets/dragons/rong_lua.png',
     title: 'Hỏa Diệm Nham Thạch',
     elements: ['FIRE', 'EARTH'],
     rarity: 2,
@@ -289,6 +295,7 @@ const DRAGONS_DB = {
   dragon_mud: {
     id: 'dragon_mud',
     name: 'Rồng Bùn Lầy',
+    image: 'assets/dragons/rong_dat.png',
     title: 'Đầm Lầy U Ám',
     elements: ['WATER', 'EARTH'],
     rarity: 2,
@@ -317,6 +324,7 @@ const DRAGONS_DB = {
   dragon_steam: {
     id: 'dragon_steam',
     name: 'Rồng Hơi Nước',
+    image: 'assets/dragons/rong_nuoc.png',
     title: 'Sương Mù Nhiệt Độ',
     elements: ['FIRE', 'WATER'],
     rarity: 2,
@@ -345,6 +353,7 @@ const DRAGONS_DB = {
   dragon_coral: {
     id: 'dragon_coral',
     name: 'Rồng San Hô',
+    image: 'assets/dragons/rong_nuoc.png',
     title: 'Thủy Thảo Rực Rỡ',
     elements: ['WATER', 'LEAF'],
     rarity: 2,
@@ -373,6 +382,7 @@ const DRAGONS_DB = {
   dragon_storm: {
     id: 'dragon_storm',
     name: 'Rồng Bão Tố',
+    image: 'assets/dragons/rong_sam.png',
     title: 'Chúa Tể Cuồng Phong',
     elements: ['THUNDER', 'WATER'],
     rarity: 3,
@@ -401,6 +411,7 @@ const DRAGONS_DB = {
   dragon_laser: {
     id: 'dragon_laser',
     name: 'Rồng Lôi Hỏa Laser',
+    image: 'assets/dragons/rong_sam.png',
     title: 'Tia Hủy Diệt',
     elements: ['THUNDER', 'FIRE'],
     rarity: 3,
@@ -430,6 +441,7 @@ const DRAGONS_DB = {
   dragon_ice: {
     id: 'dragon_ice',
     name: 'Rồng Băng Tinh',
+    image: 'assets/dragons/rong_bang.png',
     title: 'Hàn Băng Vĩnh Cửu',
     elements: ['ICE'],
     rarity: 3,
@@ -458,6 +470,7 @@ const DRAGONS_DB = {
   dragon_frostfire: {
     id: 'dragon_frostfire',
     name: 'Rồng Băng Hỏa (Hàn Diệm)',
+    image: 'assets/dragons/rong_bang.png',
     title: 'Nghịch Lý Băng Lửa',
     elements: ['ICE', 'FIRE'],
     rarity: 4,
@@ -486,6 +499,7 @@ const DRAGONS_DB = {
   dragon_light: {
     id: 'dragon_light',
     name: 'Rồng Ánh Sáng (Bạch Long)',
+    image: 'assets/dragons/rong_phuong_hoang.png',
     title: 'Hào Quang Cứu Rỗi',
     elements: ['LIGHT'],
     rarity: 4,
@@ -514,6 +528,7 @@ const DRAGONS_DB = {
   dragon_dark: {
     id: 'dragon_dark',
     name: 'Rồng Hắc Ám (Dạ Xoa Long)',
+    image: 'assets/dragons/hac_long.png',
     title: 'Bóng Tối Vực Thẳm',
     elements: ['DARK'],
     rarity: 4,
@@ -543,6 +558,7 @@ const DRAGONS_DB = {
   dragon_golden: {
     id: 'dragon_golden',
     name: 'Thần Long Hoàng Kim',
+    image: 'assets/dragons/rong_xuong_vang.png',
     title: 'Vương Giả Đảo Rồng',
     elements: ['LEGEND'],
     rarity: 5,
@@ -572,6 +588,7 @@ const DRAGONS_DB = {
   dragon_golden_bone: {
     id: 'dragon_golden_bone',
     name: 'Rồng Xương Vàng (Hoàng Kim Cốt Long)',
+    image: 'assets/dragons/rong_xuong_vang.png',
     title: 'Đế Vương Long Cốt VIP',
     elements: ['BONE', 'LEGEND', 'LIGHT'],
     rarity: 5,
@@ -602,6 +619,7 @@ const DRAGONS_DB = {
   dragon_silver_bone: {
     id: 'dragon_silver_bone',
     name: 'Rồng Xương Bạc (Ngân Cốt Long)',
+    image: 'assets/dragons/rong_xuong_bac.png',
     title: 'Hàn Ngân Bất Diệt VIP',
     elements: ['BONE', 'ICE', 'WATER'],
     rarity: 5,
@@ -632,6 +650,7 @@ const DRAGONS_DB = {
   dragon_ancient_bone: {
     id: 'dragon_ancient_bone',
     name: 'Rồng Hắc Cốt (Cốt Long Cổ Đại)',
+    image: 'assets/dragons/rong_xuong_bac.png',
     title: 'Linh Hồn Viễn Cổ',
     elements: ['BONE', 'DARK'],
     rarity: 4,
@@ -662,6 +681,7 @@ const DRAGONS_DB = {
   dragon_phoenix: {
     id: 'dragon_phoenix',
     name: 'Rồng Phượng Hoàng (Chu Tước)',
+    image: 'assets/dragons/rong_phuong_hoang.png',
     title: 'Tái Sinh Từ Tro Tàn',
     elements: ['FIRE', 'LIGHT'],
     rarity: 5,
@@ -691,6 +711,7 @@ const DRAGONS_DB = {
   dragon_hydra: {
     id: 'dragon_hydra',
     name: 'Rồng Ba Đầu (Hắc Long Hydra)',
+    image: 'assets/dragons/rong_ba_dau.png',
     title: 'Hung Thần Tam Đầu',
     elements: ['DARK', 'FIRE', 'THUNDER'],
     rarity: 4,
@@ -720,6 +741,7 @@ const DRAGONS_DB = {
   dragon_armored: {
     id: 'dragon_armored',
     name: 'Rồng Thiết Giáp Hoàng Gia',
+    image: 'assets/dragons/rong_dat.png',
     title: 'Pháo Đài Kim Loại',
     elements: ['STEEL', 'EARTH'],
     rarity: 4,
@@ -750,6 +772,7 @@ const DRAGONS_DB = {
   dragon_blood_bone: {
     id: 'dragon_blood_bone',
     name: 'Rồng Huyết Xương (Huyết Cốt Long)',
+    image: 'assets/dragons/rong_xuong_vang.png',
     title: 'Huyết Cốt Ma Thần VIP',
     elements: ['BONE', 'FIRE', 'DARK'],
     rarity: 5,
@@ -780,6 +803,7 @@ const DRAGONS_DB = {
   dragon_emerald_bone: {
     id: 'dragon_emerald_bone',
     name: 'Rồng Bích Xương (Ngọc Cốt Long)',
+    image: 'assets/dragons/rong_xuong_bac.png',
     title: 'Bích Cốt Trường Sinh VIP',
     elements: ['BONE', 'LEAF', 'LIGHT'],
     rarity: 5,

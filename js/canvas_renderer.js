@@ -16,12 +16,39 @@ class DragonCanvasRenderer {
     this.clouds = [];
     this.animTime = 0;
     this.interactiveEntities = [];
-    this.hoveredEntity = null;
     this.onEntityClick = null;
+    this.imageCache = {};
 
+    this.preloadAssets();
     this.initClouds();
     this.initWeather();
     this.setupEvents();
+  }
+
+  preloadAssets() {
+    const assets = [
+      'assets/backgrounds/dao_rong_island.jpg',
+      'assets/backgrounds/dau_truong_rong.jpg',
+      'assets/dragons/rong_xuong_vang.png',
+      'assets/dragons/rong_xuong_bac.png',
+      'assets/dragons/rong_lua.png',
+      'assets/dragons/rong_sam.png',
+      'assets/dragons/rong_bang.png',
+      'assets/dragons/hac_long.png',
+      'assets/dragons/rong_nuoc.png',
+      'assets/dragons/rong_la.png',
+      'assets/dragons/rong_dat.png',
+      'assets/dragons/rong_phuong_hoang.png',
+      'assets/dragons/rong_ba_dau.png'
+    ];
+    assets.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        this.imageCache[src] = img;
+      };
+      this.imageCache[src] = img;
+    });
   }
 
   resize() {
@@ -224,11 +251,28 @@ class DragonCanvasRenderer {
 
   drawIslandLandmass(islandId) {
     const ctx = this.ctx;
+    const bgImg = this.imageCache['assets/backgrounds/dao_rong_island.jpg'];
+    const bob = Math.sin(this.animTime * 0.8) * 5;
+
+    if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
+      ctx.save();
+      ctx.translate(0, bob);
+      ctx.drawImage(bgImg, 0, 0, this.width, this.height);
+
+      // Light ambient cloud fog across bottom
+      const mistGrad = ctx.createLinearGradient(0, this.height * 0.75, 0, this.height);
+      mistGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+      mistGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+      ctx.fillStyle = mistGrad;
+      ctx.fillRect(0, this.height * 0.75, this.width, this.height * 0.25);
+      ctx.restore();
+      return;
+    }
+
     const cx = this.width / 2;
     const cy = this.height * 0.62;
     const rx = Math.min(540, this.width * 0.47);
     const ry = 220;
-    const bob = Math.sin(this.animTime * 0.8) * 5;
 
     ctx.save();
     ctx.translate(0, bob);
@@ -610,30 +654,61 @@ class DragonCanvasRenderer {
     });
   }
 
-  // --- Dragon Master Renderer ---
   drawMasterDragon(x, y, dConfig, level, indexOffset = 0) {
     const ctx = this.ctx;
     const stage = getEvolutionStage(level);
     const scale = stage.scale;
     const bob = Math.sin(this.animTime * 4 + indexOffset * 1.5) * 3;
-    const wingFlap = Math.sin(this.animTime * 8 + indexOffset) * 0.28;
+    const breath = 1.0 + Math.sin(this.animTime * 3 + indexOffset) * 0.04;
+    const app = dConfig.appearance;
 
     ctx.save();
     ctx.translate(x, y + bob);
-    ctx.scale(scale, scale);
+    ctx.scale(scale * breath, scale * breath);
 
-    const app = dConfig.appearance;
+    const imgPath = dConfig.image;
+    const img = imgPath ? this.imageCache[imgPath] : null;
 
-    if (app.isBone) {
-      // 1. Render Tộc Rồng Xương (Golden Bone, Silver Bone, Blood Bone, Emerald Bone, Frost Bone, Dark Bone)
-      this.drawSkeletalDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isHydra) {
-      // 2. Render Rồng Ba Đầu
-      this.drawHydraDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isPhoenix) {
-      // 3. Render Rồng Phượng Hoàng
-      this.drawPhoenixDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isCosmic) {
+    if (img && img.complete && img.naturalWidth > 0) {
+      // 1. Soft ground shadow
+      ctx.save();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      ctx.beginPath();
+      ctx.ellipse(0, 16, 26, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 2. Divine Aura for VIP / Bone Dragons
+      if (app.isBone || dConfig.rarity >= 5) {
+        ctx.save();
+        const auraGlow = app.glow || '#fbbf24';
+        const pulse = Math.sin(this.animTime * 5 + indexOffset) * 6;
+        ctx.shadowColor = auraGlow;
+        ctx.shadowBlur = 18 + pulse;
+        ctx.strokeStyle = auraGlow;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.ellipse(0, 14, 34 + pulse * 0.5, 12, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 3. Draw Authentic 2D Sprite
+      const dw = 78;
+      const dh = 78;
+      ctx.drawImage(img, -dw / 2, -dh + 14, dw, dh);
+    } else {
+      const wingFlap = Math.sin(this.animTime * 8 + indexOffset) * 0.28;
+      if (app.isBone) {
+        // 1. Render Tộc Rồng Xương (Golden Bone, Silver Bone, Blood Bone, Emerald Bone, Frost Bone, Dark Bone)
+        this.drawSkeletalDragon(ctx, app, level, wingFlap, dConfig);
+      } else if (app.isHydra) {
+        // 2. Render Rồng Ba Đầu
+        this.drawHydraDragon(ctx, app, level, wingFlap, dConfig);
+      } else if (app.isPhoenix) {
+        // 3. Render Rồng Phượng Hoàng
+        this.drawPhoenixDragon(ctx, app, level, wingFlap, dConfig);
+      } else if (app.isCosmic) {
       // 4. Render Rồng Tinh Tú Ngân Hà
       this.drawCosmicDragon(ctx, app, level, wingFlap, dConfig);
     } else if (app.isDemon) {
@@ -1379,6 +1454,69 @@ class DragonCanvasRenderer {
       }
     }
     ctx.restore();
+  }
+
+  // --- Static Helper for Shop & Preview Canvases ---
+  static renderDragonToCanvas(canvas, dConfig, level = 1, options = {}) {
+    if (!canvas || !dConfig) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const anim = (options && typeof options.animTime === 'number') ? options.animTime : 0;
+    const pulse = anim ? Math.sin(anim * 4) * 2.5 : 0;
+
+    if (dConfig.image) {
+      if (!DragonCanvasRenderer._staticImgCache) {
+        DragonCanvasRenderer._staticImgCache = {};
+      }
+      let img = DragonCanvasRenderer._staticImgCache[dConfig.image];
+      if (!img) {
+        img = new Image();
+        img.src = dConfig.image;
+        DragonCanvasRenderer._staticImgCache[dConfig.image] = img;
+      }
+
+      const draw = () => {
+        ctx.clearRect(0, 0, w, h);
+
+        // Ground shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.beginPath();
+        ctx.ellipse(w / 2, h * 0.86, w * 0.32, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Aura for VIP / Bone Dragons
+        if (dConfig.rarity >= 5 || dConfig.appearance?.isBone) {
+          ctx.save();
+          const glow = dConfig.appearance?.glow || '#fbbf24';
+          ctx.shadowColor = glow;
+          ctx.shadowBlur = 14 + pulse * 1.5;
+          ctx.strokeStyle = glow;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.ellipse(w / 2, h * 0.85, w * 0.38 + pulse * 0.5, 9, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Draw image sprite centered with gentle breathing
+        const pad = 6;
+        const size = Math.min(w, h) - pad * 2 + pulse;
+        const ox = (w - size) / 2;
+        const oy = (h - size) / 2 - 2 - pulse * 0.5;
+        ctx.drawImage(img, ox, oy, size, size);
+      };
+
+      if (img.complete && img.naturalWidth > 0) {
+        draw();
+      } else {
+        img.onload = draw;
+      }
+    }
   }
 }
 

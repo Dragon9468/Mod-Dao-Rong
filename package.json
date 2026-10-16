@@ -28,9 +28,9 @@
       "output": "dist"
     },
     "win": {
+      "signAndEditExecutable": false,
       "target": [
-        "nsis",
-        "portable"
+        "dir"
       ],
       "icon": "assets/icon.png"
     },
