@@ -3,12 +3,9 @@
  * Quản lý kho tài nguyên Media (Ảnh, Âm thanh, Video, File Game ROM)
  */
 window.PGAME_CONFIG = {
-  version: '4.0.0',
-  // Media CDN base path.
-  // Mặc định chạy qua Cloudflare Pages cùng origin: '' (hoặc đường dẫn tương đối)
-  // Khi cần mở rộng tách sang Cloudflare R2 / Custom Media CDN:
-  // Chỉ cần đổi giá trị này, ví dụ: 'https://media.dragon9468.com'
-  MEDIA_BASE_URL: '',
+  version: '4.1.0',
+  // Media CDN base path kết nối trực tiếp R2 Bucket 'pgame-obj' qua Pages Function
+  MEDIA_BASE_URL: '/media',
   
   // Hàm resolver chuyển đổi đường dẫn tài nguyên
   resolveMedia(path) {
@@ -16,7 +13,8 @@ window.PGAME_CONFIG = {
     if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
       return path;
     }
-    const cleanPath = path.startsWith('/') ? path : '/' + path;
-    return this.MEDIA_BASE_URL ? (this.MEDIA_BASE_URL + cleanPath) : path;
+    // Chuẩn hóa path: bỏ leading slash nếu có để ghép vào MEDIA_BASE_URL
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    return this.MEDIA_BASE_URL ? `${this.MEDIA_BASE_URL}/${cleanPath}` : `/${cleanPath}`;
   }
 };
