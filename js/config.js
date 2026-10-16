@@ -3,9 +3,11 @@
  * Quản lý kho tài nguyên Media (Ảnh, Âm thanh, Video, File Game ROM)
  */
 window.PGAME_CONFIG = {
-  version: '4.1.0',
-  // Media CDN base path kết nối trực tiếp R2 Bucket 'pgame-obj' qua Pages Function
-  MEDIA_BASE_URL: '/media',
+  version: '4.3.0',
+  // Tự động nhận diện localhost để load trực tiếp assets nội bộ, hoặc qua R2 CDN trên production
+  MEDIA_BASE_URL: (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'))
+    ? '' 
+    : '/media/games/daorong',
   
   // Hàm resolver chuyển đổi đường dẫn tài nguyên
   resolveMedia(path) {
@@ -13,8 +15,7 @@ window.PGAME_CONFIG = {
     if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
       return path;
     }
-    // Chuẩn hóa path: bỏ leading slash nếu có để ghép vào MEDIA_BASE_URL
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    return this.MEDIA_BASE_URL ? `${this.MEDIA_BASE_URL}/${cleanPath}` : `/${cleanPath}`;
+    return this.MEDIA_BASE_URL ? `${this.MEDIA_BASE_URL}/${cleanPath}` : cleanPath;
   }
 };

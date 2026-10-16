@@ -30,6 +30,11 @@ class DragonCanvasRenderer {
     const assets = [
       'assets/backgrounds/dao_rong_island.jpg',
       'assets/backgrounds/dau_truong_rong.jpg',
+      'assets/backgrounds/island_grass.png',
+      'assets/backgrounds/island_volcano.png',
+      'assets/backgrounds/island_ice.png',
+      'assets/backgrounds/island_desert.png',
+      'assets/backgrounds/island_whale.png',
       'assets/banner.png',
       'assets/logo.png',
       'assets/icon.png',
@@ -292,18 +297,60 @@ class DragonCanvasRenderer {
 
   drawIslandLandmass(islandId) {
     const ctx = this.ctx;
-    const bgImg = this.imageCache['assets/backgrounds/dao_rong_island.jpg'];
+    const bgMap = {
+      island_1: 'assets/backgrounds/dao_rong_island.jpg',
+      island_2: 'assets/backgrounds/island_volcano.png',
+      island_3: 'assets/backgrounds/island_whale.png',
+      island_4: 'assets/backgrounds/island_desert.png',
+      island_5: 'assets/backgrounds/island_ice.png'
+    };
+    const bgPath = bgMap[islandId] || bgMap.island_1;
+    const bgImg = this.imageCache[bgPath] || this.imageCache['assets/backgrounds/dao_rong_island.jpg'];
     const bob = Math.sin(this.animTime * 0.8) * 5;
 
     if (bgImg && bgImg.complete && bgImg.naturalWidth > 0) {
       ctx.save();
       ctx.translate(0, bob);
-      ctx.drawImage(bgImg, 0, 0, this.width, this.height);
+      
+      if (bgPath === 'assets/backgrounds/dao_rong_island.jpg') {
+        ctx.drawImage(bgImg, 0, 0, this.width, this.height);
+      } else {
+        // Floating island with transparent background: draw scenic ocean/sky gradient, then draw island floating in center!
+        const islandGrad = ctx.createLinearGradient(0, 0, 0, this.height);
+        if (islandId === 'island_2') {
+          islandGrad.addColorStop(0, '#450a0a');
+          islandGrad.addColorStop(0.6, '#7c2d12');
+          islandGrad.addColorStop(1, '#1c1917');
+        } else if (islandId === 'island_5') {
+          islandGrad.addColorStop(0, '#082f49');
+          islandGrad.addColorStop(0.6, '#0369a1');
+          islandGrad.addColorStop(1, '#0c4a6e');
+        } else if (islandId === 'island_4') {
+          islandGrad.addColorStop(0, '#451a03');
+          islandGrad.addColorStop(0.6, '#78350f');
+          islandGrad.addColorStop(1, '#292524');
+        } else {
+          islandGrad.addColorStop(0, '#0284c7');
+          islandGrad.addColorStop(0.6, '#0369a1');
+          islandGrad.addColorStop(1, '#0c4a6e');
+        }
+        ctx.fillStyle = islandGrad;
+        ctx.fillRect(0, 0, this.width, this.height);
+
+        // Center the island sprite
+        const maxW = Math.min(1080, this.width * 0.88);
+        const scale = maxW / bgImg.naturalWidth;
+        const dw = bgImg.naturalWidth * scale;
+        const dh = bgImg.naturalHeight * scale;
+        const dx = (this.width - dw) / 2;
+        const dy = Math.max(80, (this.height - dh) / 2 + 30);
+        ctx.drawImage(bgImg, dx, dy, dw, dh);
+      }
 
       // Light ambient cloud fog across bottom
       const mistGrad = ctx.createLinearGradient(0, this.height * 0.75, 0, this.height);
       mistGrad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-      mistGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
+      mistGrad.addColorStop(1, 'rgba(255, 255, 255, 0.25)');
       ctx.fillStyle = mistGrad;
       ctx.fillRect(0, this.height * 0.75, this.width, this.height * 0.25);
       ctx.restore();

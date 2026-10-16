@@ -11,9 +11,10 @@ class DragonSoundEngine {
     this.bgmTimer = null;
     this.masterVolume = 0.8;
     this.sfxVolume = 0.9;
-    this.bgmVolume = 0.35;
+    this.bgmVolume = 0.4;
     this.currentTheme = 'island'; // 'island' | 'battle'
     this.initialized = false;
+    this.audioClipCache = {};
   }
 
   init() {
@@ -46,126 +47,139 @@ class DragonSoundEngine {
     return this.isMuted;
   }
 
-  // --- Sound Effects (SFX) ---
-
-  playClick() {
+  // --- Helper to play genuine Zing Me audio clip with fallback ---
+  playClip(relPath, fallbackFn) {
     if (this.isMuted) return;
     this.ensureContext();
-    if (!this.ctx) return;
 
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    const now = this.ctx.currentTime;
+    const fullUrl = window.PGAME_CONFIG?.resolveMedia 
+      ? window.PGAME_CONFIG.resolveMedia(relPath) 
+      : relPath;
 
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, now);
-    osc.frequency.exponentialRampToValueAtTime(1000, now + 0.05);
+    let sound = this.audioClipCache[relPath];
+    if (!sound) {
+      sound = new Audio(fullUrl);
+      this.audioClipCache[relPath] = sound;
+    }
 
-    gain.gain.setValueAtTime(0.12 * this.sfxVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.06);
+    try {
+      sound.volume = this.sfxVolume * this.masterVolume;
+      sound.currentTime = 0;
+      const p = sound.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          if (fallbackFn) fallbackFn();
+        });
+      }
+    } catch (e) {
+      if (fallbackFn) fallbackFn();
+    }
   }
 
-  playGold() {
-    if (this.isMuted) return;
-    this.ensureContext();
-    if (!this.ctx) return;
+  // --- Sound Effects (SFX) Authentic Zing Me ---
 
-    const notes = [987.77, 1318.51, 1975.53]; // B5, E6, B6
-    const now = this.ctx.currentTime;
+  playClick() {
+    this.playClip('assets/audio/soundClick.wav', () => {
+      if (this.isMuted) return;
+      this.ensureContext();
+      if (!this.ctx) return;
 
-    notes.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      const startTime = now + idx * 0.06;
+      const now = this.ctx.currentTime;
 
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(freq, startTime);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(1000, now + 0.05);
 
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(0.18 * this.sfxVolume, startTime + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.28);
+      gain.gain.setValueAtTime(0.12 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
-      osc.start(startTime);
-      osc.stop(startTime + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    });
+  }
+
+  playGold() {
+    this.playClip('assets/audio/nhatvang.wav', () => {
+      if (this.isMuted) return;
+      this.ensureContext();
+      if (!this.ctx) return;
+
+      const notes = [987.77, 1318.51, 1975.53];
+      const now = this.ctx.currentTime;
+
+      notes.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const startTime = now + idx * 0.06;
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, startTime);
+
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.18 * this.sfxVolume, startTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.28);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.3);
+      });
     });
   }
 
   playHarvest() {
-    if (this.isMuted) return;
-    this.ensureContext();
-    if (!this.ctx) return;
-
-    const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440, now);
-    osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
-
-    gain.gain.setValueAtTime(0.2 * this.sfxVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.16);
+    this.playGold();
   }
 
   playFeed() {
-    if (this.isMuted) return;
-    this.ensureContext();
-    if (!this.ctx) return;
+    this.playClip('assets/audio/rongan.wav', () => {
+      if (this.isMuted) return;
+      this.ensureContext();
+      if (!this.ctx) return;
 
-    const now = this.ctx.currentTime;
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
 
-    // Crunch pop
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(160, now + 0.08);
 
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(320, now);
-    osc.frequency.exponentialRampToValueAtTime(160, now + 0.08);
+      gain.gain.setValueAtTime(0.18 * this.sfxVolume, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
 
-    gain.gain.setValueAtTime(0.18 * this.sfxVolume, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
 
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.1);
+    });
+  }
 
-    osc.start(now);
-    osc.stop(now + 0.1);
+  playFoodDrop() {
+    this.playClip('assets/audio/thathucan.wav');
+  }
 
-    // Cute chirp
-    setTimeout(() => {
-      if (this.isMuted || !this.ctx) return;
-      const t = this.ctx.currentTime;
-      const chirpOsc = this.ctx.createOscillator();
-      const chirpGain = this.ctx.createGain();
+  playWaterSplash() {
+    this.playClip('assets/audio/roixuongnuoc.wav');
+  }
 
-      chirpOsc.type = 'sine';
-      chirpOsc.frequency.setValueAtTime(700, t);
-      chirpOsc.frequency.exponentialRampToValueAtTime(1200, t + 0.12);
+  playGroundThud() {
+    this.playClip('assets/audio/roixuongdat.wav');
+  }
 
-      chirpGain.gain.setValueAtTime(0.15 * this.sfxVolume, t);
-      chirpGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+  playDefeat() {
+    this.playClip('assets/audio/thuatran.wav');
+  }
 
-      chirpOsc.connect(chirpGain);
-      chirpGain.connect(this.ctx.destination);
-
-      chirpOsc.start(t);
-      chirpOsc.stop(t + 0.15);
-    }, 70);
+  playDragonRoar() {
+    this.playClip('assets/audio/haclong.wav');
   }
 
   playLevelUp() {
@@ -411,9 +425,11 @@ class DragonSoundEngine {
 
     // Track URLs trên R2 qua PGAME_CONFIG
     const trackMap = {
-      island: 'assets/audio/bgm_island.wav',
-      battle: 'assets/audio/bgm_battle.wav',
-      hatchery: 'assets/audio/bgm_hatchery.wav'
+      island: 'assets/audio/nhacnen0.wav',
+      island_alt: 'assets/audio/nhacnen1.wav',
+      battle: 'assets/audio/nhacpvp.wav',
+      arena: 'assets/audio/nhacloidai.wav',
+      hatchery: 'assets/audio/nhacnoel.wav'
     };
 
     const trackPath = trackMap[theme] || trackMap.island;
