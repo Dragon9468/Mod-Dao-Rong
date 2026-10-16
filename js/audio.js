@@ -400,36 +400,67 @@ class DragonSoundEngine {
     blast.stop(now + 0.6);
   }
 
-  // --- Procedural Ambient Background Music (BGM) ---
+  // --- Ambient Background Music (BGM) Streamer with Procedural Fallback ---
   startBGM(theme = 'island') {
     this.currentTheme = theme;
     if (this.isMuted) return;
     this.ensureContext();
-    if (!this.ctx) return;
 
     this.stopBGM();
     this.bgmPlaying = true;
 
-    // Melody loops
+    // Track URLs trên R2 qua PGAME_CONFIG
+    const trackMap = {
+      island: 'assets/audio/bgm_island.wav',
+      battle: 'assets/audio/bgm_battle.wav',
+      hatchery: 'assets/audio/bgm_hatchery.wav'
+    };
+
+    const trackPath = trackMap[theme] || trackMap.island;
+    const streamUrl = window.PGAME_CONFIG?.resolveMedia 
+      ? window.PGAME_CONFIG.resolveMedia(trackPath) 
+      : trackPath;
+
+    if (!this.bgmAudioElement) {
+      this.bgmAudioElement = new Audio();
+      this.bgmAudioElement.loop = true;
+      this.bgmAudioElement.crossOrigin = 'anonymous';
+    }
+
+    this.bgmAudioElement.src = streamUrl;
+    this.bgmAudioElement.volume = this.bgmVolume * this.masterVolume;
+
+    const playPromise = this.bgmAudioElement.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(err => {
+        console.warn("BGM stream autoplay policy or missing file, falling back to Web Audio synth:", err);
+        this.startProceduralBGM(theme);
+      });
+    }
+  }
+
+  startProceduralBGM(theme) {
+    if (!this.ctx || !this.bgmPlaying || this.isMuted) return;
+
     const islandMelody = [
-      { note: 261.63, dur: 0.6 }, // C4
-      { note: 329.63, dur: 0.6 }, // E4
-      { note: 392.00, dur: 0.8 }, // G4
-      { note: 523.25, dur: 1.0 }, // C5
-      { note: 440.00, dur: 0.6 }, // A4
-      { note: 392.00, dur: 0.8 }, // G4
-      { note: 349.23, dur: 0.6 }, // F4
-      { note: 329.63, dur: 1.2 }  // E4
+      { note: 261.63, dur: 0.6 },
+      { note: 329.63, dur: 0.6 },
+      { note: 392.00, dur: 0.8 },
+      { note: 523.25, dur: 1.0 },
+      { note: 440.00, dur: 0.6 },
+      { note: 392.00, dur: 0.8 },
+      { note: 349.23, dur: 0.6 },
+      { note: 329.63, dur: 1.2 }
     ];
 
     const battleMelody = [
-      { note: 220.00, dur: 0.3 }, // A3
-      { note: 261.63, dur: 0.3 }, // C4
-      { note: 293.66, dur: 0.3 }, // D4
-      { note: 329.63, dur: 0.4 }, // E4
-      { note: 293.66, dur: 0.3 }, // D4
-      { note: 329.63, dur: 0.3 }, // E4
-      { note: 440.00, dur: 0.6 }  // A4
+      { note: 220.00, dur: 0.3 },
+      { note: 261.63, dur: 0.3 },
+      { note: 293.66, dur: 0.3 },
+      { note: 329.63, dur: 0.4 },
+      { note: 293.66, dur: 0.3 },
+      { note: 329.63, dur: 0.3 },
+      { note: 440.00, dur: 0.6 }
     ];
 
     const melody = (theme === 'battle') ? battleMelody : islandMelody;
@@ -441,7 +472,6 @@ class DragonSoundEngine {
       const item = melody[step % melody.length];
       const now = this.ctx.currentTime;
 
-      // Soft ambient tone
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
@@ -467,6 +497,9 @@ class DragonSoundEngine {
 
   stopBGM() {
     this.bgmPlaying = false;
+    if (this.bgmAudioElement) {
+      this.bgmAudioElement.pause();
+    }
     if (this.bgmTimer) {
       clearTimeout(this.bgmTimer);
       this.bgmTimer = null;
@@ -476,3 +509,4 @@ class DragonSoundEngine {
 
 // Global audio singleton
 window.DragonAudio = new DragonSoundEngine();
+
