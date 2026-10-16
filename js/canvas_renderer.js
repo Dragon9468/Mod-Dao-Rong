@@ -720,9 +720,10 @@ class DragonCanvasRenderer {
     } else if (app.isCyber || app.isArmored) {
       // 7. Render Rồng Cơ Khí / Thiết Giáp
       this.drawCyberDragon(ctx, app, level, wingFlap, dConfig);
-    } else {
-      // 8. Render Rồng Tiêu Chuẩn Nâng Cao
-      this.drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig);
+      } else {
+        // 8. Render Rồng Tiêu Chuẩn Nâng Cao
+        this.drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig);
+      }
     }
 
     // Level Badge Pill
