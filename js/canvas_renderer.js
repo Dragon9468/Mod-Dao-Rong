@@ -19,6 +19,7 @@ class DragonCanvasRenderer {
     this.onEntityClick = null;
     this.imageCache = {};
 
+    this.resize();
     this.preloadAssets();
     this.initClouds();
     this.initWeather();
@@ -29,37 +30,70 @@ class DragonCanvasRenderer {
     const assets = [
       'assets/backgrounds/dao_rong_island.jpg',
       'assets/backgrounds/dau_truong_rong.jpg',
-      'assets/dragons/rong_xuong_vang.png',
-      'assets/dragons/rong_xuong_bac.png',
+      'assets/banner.png',
+      'assets/logo.png',
+      'assets/icon.png',
       'assets/dragons/rong_lua.png',
-      'assets/dragons/rong_sam.png',
-      'assets/dragons/rong_bang.png',
-      'assets/dragons/hac_long.png',
       'assets/dragons/rong_nuoc.png',
       'assets/dragons/rong_la.png',
       'assets/dragons/rong_dat.png',
+      'assets/dragons/rong_sam.png',
+      'assets/dragons/rong_bang.png',
+      'assets/dragons/rong_dung_nham.png',
+      'assets/dragons/rong_bun_lay.png',
+      'assets/dragons/rong_hoi_nuoc.png',
+      'assets/dragons/rong_san_ho.png',
+      'assets/dragons/rong_bao_to.png',
+      'assets/dragons/rong_laser.png',
+      'assets/dragons/rong_bang_hoa.png',
+      'assets/dragons/rong_anh_sang.png',
+      'assets/dragons/hac_long.png',
+      'assets/dragons/rong_xuong_bac.png',
+      'assets/dragons/rong_xuong_vang.png',
+      'assets/dragons/than_long_hoang_kim.png',
+      'assets/dragons/rong_hac_cot.png',
+      'assets/dragons/rong_huyet_xuong.png',
+      'assets/dragons/rong_bich_xuong.png',
+      'assets/dragons/rong_bang_xuong.png',
+      'assets/dragons/rong_ba_dau.png',
       'assets/dragons/rong_phuong_hoang.png',
-      'assets/dragons/rong_ba_dau.png'
+      'assets/dragons/rong_tinh_tu.png',
+      'assets/dragons/rong_bach_quy.png',
+      'assets/dragons/rong_bien_sau.png',
+      'assets/dragons/rong_co_khi.png',
+      'assets/dragons/rong_thiet_giap.png'
     ];
     assets.forEach(src => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        this.imageCache[src] = img;
-      };
-      this.imageCache[src] = img;
+      this.getImage(src);
+      if (src.includes('assets/dragons/')) {
+        this.getImage(src.replace('assets/dragons/', 'assets/dragons/thumbs/'));
+      }
     });
+  }
+
+  getImage(src) {
+    if (!src) return null;
+    if (this.imageCache[src]) return this.imageCache[src];
+    const img = new Image();
+    img.src = src;
+    this.imageCache[src] = img;
+    return img;
   }
 
   resize() {
     if (!this.canvas) return;
+    const dpr = Math.max(window.devicePixelRatio || 1, 1);
     const rect = this.canvas.getBoundingClientRect();
-    this.canvas.width = rect.width * window.devicePixelRatio;
-    this.canvas.height = rect.height * window.devicePixelRatio;
-    this.width = rect.width;
-    this.height = rect.height;
+    const cssW = rect.width > 0 ? rect.width : (this.canvas.clientWidth || 1200);
+    const cssH = rect.height > 0 ? rect.height : (this.canvas.clientHeight || 750);
+    this.canvas.width = Math.round(cssW * dpr);
+    this.canvas.height = Math.round(cssH * dpr);
+    this.width = cssW;
+    this.height = cssH;
     if (this.ctx) {
-      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.ctx.imageSmoothingEnabled = true;
+      this.ctx.imageSmoothingQuality = 'high';
     }
   }
 
@@ -148,6 +182,10 @@ class DragonCanvasRenderer {
     if (!this.ctx) return;
     this.animTime += 0.03;
     const ctx = this.ctx;
+    const dpr = Math.max(window.devicePixelRatio || 1, 1);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     this.interactiveEntities = [];
 
     ctx.clearRect(0, 0, this.width, this.height);
@@ -407,6 +445,16 @@ class DragonCanvasRenderer {
     });
 
     ctx.save();
+    // 0. Soft Organic Ground Contact Shadow
+    const caveGroundShadow = ctx.createRadialGradient(x, y + 44, 15, x, y + 44, 75);
+    caveGroundShadow.addColorStop(0, 'rgba(0, 0, 0, 0.45)');
+    caveGroundShadow.addColorStop(0.5, 'rgba(0, 0, 0, 0.2)');
+    caveGroundShadow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = caveGroundShadow;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 44, 75, 20, 0, 0, Math.PI * 2);
+    ctx.fill();
+
     // 1. Rocky Cavern Cliff Base
     const rockGrad = ctx.createRadialGradient(x, y + 10, 10, x, y + 10, 65);
     rockGrad.addColorStop(0, '#475569');
@@ -537,6 +585,16 @@ class DragonCanvasRenderer {
     ctx.roundRect(x - 30, y - 44, 10, 15, 3);
     ctx.fill();
     ctx.shadowBlur = 0;
+
+    // 0. Soft Ground Contact Shadow
+    const nestShadow = ctx.createRadialGradient(x, y + 26, 12, x, y + 26, 68);
+    nestShadow.addColorStop(0, 'rgba(0, 0, 0, 0.42)');
+    nestShadow.addColorStop(0.6, 'rgba(0, 0, 0, 0.18)');
+    nestShadow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = nestShadow;
+    ctx.beginPath();
+    ctx.ellipse(x, y + 26, 68, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
 
     // 2. Straw & Golden Woven Dragon Nest Base
     const nestGrad = ctx.createLinearGradient(x - 55, y, x + 55, y + 40);
@@ -678,6 +736,16 @@ class DragonCanvasRenderer {
       });
 
       ctx.save();
+      // 0. Soft Ground Shadow
+      const farmShadow = ctx.createRadialGradient(x, y + 16, 10, x, y + 16, 48);
+      farmShadow.addColorStop(0, 'rgba(0, 0, 0, 0.4)');
+      farmShadow.addColorStop(0.6, 'rgba(0, 0, 0, 0.16)');
+      farmShadow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = farmShadow;
+      ctx.beginPath();
+      ctx.ellipse(x, y + 16, 48, 24, 0, 0, Math.PI * 2);
+      ctx.fill();
+
       // 1. Wooden Garden Bed Frame
       ctx.fillStyle = '#451a03';
       ctx.beginPath();
@@ -786,6 +854,16 @@ class DragonCanvasRenderer {
       ctx.save();
       const habConfig = HABITATS_DB[hab.type] || HABITATS_DB.habitat_fire;
       const elemConfig = ELEMENTS[habConfig.element] || ELEMENTS.FIRE;
+
+      // 0. Soft Organic Feathered Ground Shadow blending with terrain
+      const habShadow = ctx.createRadialGradient(pos.x, pos.y + 24, 25, pos.x, pos.y + 24, 88);
+      habShadow.addColorStop(0, 'rgba(0, 0, 0, 0.45)');
+      habShadow.addColorStop(0.5, 'rgba(0, 0, 0, 0.22)');
+      habShadow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = habShadow;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 24, 88, 48, 0, 0, Math.PI * 2);
+      ctx.fill();
 
       // 1. 3D Stone Altar Platform Base
       ctx.fillStyle = '#0f172a';
@@ -915,14 +993,34 @@ class DragonCanvasRenderer {
     ctx.scale(scale * breath, scale * breath);
 
     const imgPath = dConfig.image;
-    const img = imgPath ? this.imageCache[imgPath] : null;
+    const img = imgPath ? this.getImage(imgPath) : null;
 
     if (img && img.complete && img.naturalWidth > 0) {
-      // 1. Soft ground shadow
+      // 1. Multi-layer grounded contact shadow
       ctx.save();
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+      const shadowGrad = ctx.createRadialGradient(0, 15, 2, 0, 15, 32);
+      shadowGrad.addColorStop(0, 'rgba(0, 0, 0, 0.55)');
+      shadowGrad.addColorStop(0.4, 'rgba(0, 0, 0, 0.25)');
+      shadowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = shadowGrad;
       ctx.beginPath();
-      ctx.ellipse(0, 16, 28, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(0, 15, 32, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Deep contact shadow directly under paws
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+      ctx.beginPath();
+      ctx.ellipse(0, 14, 15, 4.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Subtle ambient ground reflection matching dragon element
+      const elemGlow = app.glow || '#f59e0b';
+      const glowGrad = ctx.createRadialGradient(0, 14, 2, 0, 14, 24);
+      glowGrad.addColorStop(0, elemGlow.includes('rgba') ? elemGlow : 'rgba(251, 191, 36, 0.22)');
+      glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.ellipse(0, 14, 24, 7, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
@@ -934,16 +1032,18 @@ class DragonCanvasRenderer {
         ctx.shadowColor = auraGlow;
         ctx.shadowBlur = 18 + pulse;
         ctx.strokeStyle = auraGlow;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.2;
         ctx.beginPath();
-        ctx.ellipse(0, 14, 34 + pulse * 0.5, 12, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 14, 34 + pulse * 0.5, 11, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
 
-      // 3. Draw Authentic 2D Sprite
+      // 3. Draw Authentic 2D Sprite with High Quality Smoothing
       const dw = 92;
       const dh = 92;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, -dw / 2, -dh + 18, dw, dh);
     } else {
       const wingFlap = Math.sin(this.animTime * 8 + indexOffset) * 0.28;
@@ -1566,60 +1666,7 @@ class DragonCanvasRenderer {
     ctx.fill();
   }
 
-  // --- Static Universal Dragon Avatar Renderer for UI Modals / Cards / Arena ---
-  static renderDragonToCanvas(canvas, dConfig, level = 1, options = {}) {
-    if (!canvas || !dConfig) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.save();
 
-    // Circular Glow Backing
-    const glow = dConfig.appearance?.glow || 'rgba(245, 158, 11, 0.4)';
-    const grad = ctx.createRadialGradient(w / 2, h / 2 + 5, 4, w / 2, h / 2 + 5, w * 0.45);
-    grad.addColorStop(0, glow.replace('1)', '0.35)').replace('0.9)', '0.35)'));
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(w / 2, h / 2 + 5, w * 0.45, 0, Math.PI * 2);
-    ctx.fill();
-
-    if (!DragonCanvasRenderer._dummy) {
-      DragonCanvasRenderer._dummy = new DragonCanvasRenderer(null);
-    }
-    const d = DragonCanvasRenderer._dummy;
-    d.ctx = ctx;
-    d.animTime = options.animTime || (Date.now() / 1000);
-
-    const scale = options.scale || (w / 105);
-    ctx.translate(w / 2, h / 2 + 8);
-    ctx.scale(scale, scale);
-
-    const wingFlap = Math.sin(d.animTime * 6) * 0.25;
-    const app = dConfig.appearance;
-
-    if (app.isBone) {
-      d.drawSkeletalDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isHydra) {
-      d.drawHydraDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isPhoenix) {
-      d.drawPhoenixDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isCosmic) {
-      d.drawCosmicDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isDemon) {
-      d.drawDemonDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isLeviathan) {
-      d.drawLeviathanDragon(ctx, app, level, wingFlap, dConfig);
-    } else if (app.isCyber || app.isArmored) {
-      d.drawCyberDragon(ctx, app, level, wingFlap, dConfig);
-    } else {
-      d.drawEnhancedStandardDragon(ctx, app, level, wingFlap, dConfig);
-    }
-
-    ctx.restore();
-  }
 
   drawGoldBubble(x, y, goldAmount) {
     const ctx = this.ctx;
@@ -1716,66 +1763,98 @@ class DragonCanvasRenderer {
     ctx.restore();
   }
 
-  // --- Static Helper for Shop & Preview Canvases ---
+  // --- Static Universal Dragon Avatar Renderer for UI Modals / Cards / Arena ---
   static renderDragonToCanvas(canvas, dConfig, level = 1, options = {}) {
     if (!canvas || !dConfig) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    const dpr = Math.max(window.devicePixelRatio || 1, 2);
+    const cssW = canvas.clientWidth > 0 ? canvas.clientWidth : (canvas.width || 92);
+    const cssH = canvas.clientHeight > 0 ? canvas.clientHeight : (canvas.height || 82);
+    const targetW = Math.round(cssW * dpr);
+    const targetH = Math.round(cssH * dpr);
+
+    if (canvas.width !== targetW || canvas.height !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+    }
 
     const anim = (options && typeof options.animTime === 'number') ? options.animTime : 0;
     const pulse = anim ? Math.sin(anim * 4) * 2.5 : 0;
 
-    if (dConfig.image) {
-      if (!DragonCanvasRenderer._staticImgCache) {
-        DragonCanvasRenderer._staticImgCache = {};
+    // Prefer thumbnail for card previews (<= 160px) to prevent downsampling pixelation
+    let imgSrc = dConfig.image;
+    if (cssW <= 160 && imgSrc && imgSrc.includes('assets/dragons/')) {
+      imgSrc = imgSrc.replace('assets/dragons/', 'assets/dragons/thumbs/');
+    }
+
+    if (!DragonCanvasRenderer._staticImgCache) {
+      DragonCanvasRenderer._staticImgCache = {};
+    }
+
+    const draw = (imageToDraw) => {
+      ctx.save();
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      // Multi-layer grounded contact shadow
+      const grad = ctx.createRadialGradient(cssW / 2, cssH * 0.84, 2, cssW / 2, cssH * 0.84, cssW * 0.38);
+      grad.addColorStop(0, 'rgba(0, 0, 0, 0.5)');
+      grad.addColorStop(0.5, 'rgba(0, 0, 0, 0.22)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(cssW / 2, cssH * 0.84, cssW * 0.38, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Deep contact shadow directly under paws
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.beginPath();
+      ctx.ellipse(cssW / 2, cssH * 0.84, cssW * 0.20, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Aura for VIP / Bone Dragons
+      if (dConfig.rarity >= 5 || dConfig.appearance?.isBone) {
+        ctx.save();
+        const glow = dConfig.appearance?.glow || '#fbbf24';
+        ctx.shadowColor = glow;
+        ctx.shadowBlur = 12 + pulse * 1.2;
+        ctx.strokeStyle = glow;
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        ctx.ellipse(cssW / 2, cssH * 0.83, cssW * 0.36 + pulse * 0.4, 8.5, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
       }
-      let img = DragonCanvasRenderer._staticImgCache[dConfig.image];
+
+      if (imageToDraw && imageToDraw.naturalWidth > 0) {
+        const pad = 6;
+        const size = Math.min(cssW, cssH) - pad * 2 + pulse;
+        const ox = (cssW - size) / 2;
+        const oy = (cssH - size) / 2 - 2 - pulse * 0.5;
+        ctx.drawImage(imageToDraw, ox, oy, size, size);
+      }
+      ctx.restore();
+    };
+
+    if (imgSrc) {
+      let img = DragonCanvasRenderer._staticImgCache[imgSrc];
       if (!img) {
         img = new Image();
-        img.src = dConfig.image;
-        DragonCanvasRenderer._staticImgCache[dConfig.image] = img;
+        img.src = imgSrc;
+        DragonCanvasRenderer._staticImgCache[imgSrc] = img;
       }
-
-      const draw = () => {
-        ctx.clearRect(0, 0, w, h);
-
-        // Ground shadow
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
-        ctx.beginPath();
-        ctx.ellipse(w / 2, h * 0.86, w * 0.32, 7, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Aura for VIP / Bone Dragons
-        if (dConfig.rarity >= 5 || dConfig.appearance?.isBone) {
-          ctx.save();
-          const glow = dConfig.appearance?.glow || '#fbbf24';
-          ctx.shadowColor = glow;
-          ctx.shadowBlur = 14 + pulse * 1.5;
-          ctx.strokeStyle = glow;
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          ctx.ellipse(w / 2, h * 0.85, w * 0.38 + pulse * 0.5, 9, 0, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-        }
-
-        // Draw image sprite centered with gentle breathing
-        const pad = 6;
-        const size = Math.min(w, h) - pad * 2 + pulse;
-        const ox = (w - size) / 2;
-        const oy = (h - size) / 2 - 2 - pulse * 0.5;
-        ctx.drawImage(img, ox, oy, size, size);
-      };
 
       if (img.complete && img.naturalWidth > 0) {
-        draw();
+        draw(img);
       } else {
-        img.onload = draw;
+        img.onload = () => draw(img);
       }
+    } else {
+      draw(null);
     }
   }
 }
